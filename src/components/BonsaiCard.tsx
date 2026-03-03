@@ -51,7 +51,7 @@ export function BonsaiCard({
                     <span className='text-xs'>{createdAt}</span>
                 </div>
 
-                <div className='flex items-center justify-between'>
+                <div className='flex items-center justify-start'>
                     <button
                         onClick={handleLike}
                         className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition ${
@@ -60,10 +60,6 @@ export function BonsaiCard({
                                 : "bg-gray-700 text-gray-400 hover:bg-gray-600"
                         }`}>
                         {isLiked ? "❤️" : "🤍"} {likeCount}
-                    </button>
-
-                    <button className='px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition'>
-                        詳細
                     </button>
                 </div>
             </div>
