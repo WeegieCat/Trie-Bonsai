@@ -26,6 +26,13 @@ export function UIOverlay() {
         }
     };
 
+    const scrollToBottom = () => {
+        window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: "smooth",
+        });
+    };
+
     return (
         <div className='absolute inset-0 pointer-events-none'>
             {/* トップバー */}
@@ -62,6 +69,27 @@ export function UIOverlay() {
                         </button>
                     </div>
                 </div>
+            </div>
+
+            {/* 右下スクロールボタン */}
+            <div className='absolute bottom-24 right-8 pointer-events-auto'>
+                <button
+                    onClick={scrollToBottom}
+                    className='w-14 h-14 bg-gray-800 bg-opacity-80 backdrop-blur hover:bg-gray-700 text-white rounded-full shadow-lg transition flex items-center justify-center'
+                    title='ページ下部へ移動'>
+                    <svg
+                        className='w-6 h-6'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'>
+                        <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth={2}
+                            d='M19 14l-7 7m0 0l-7-7m7 7V3'
+                        />
+                    </svg>
+                </button>
             </div>
         </div>
     );
