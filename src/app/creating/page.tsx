@@ -4,19 +4,25 @@ import { BonsaiCanvas } from "@/components/Canvas";
 import { UIOverlay } from "@/components/UIOverlay";
 import { SideMenu } from "@/components/SideMenu";
 import { InfinitySlider } from "@/components/Gallery";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 export default function Creating() {
     return (
         <div className='w-full bg-black text-white'>
+            <Header />
+
             {/* メイン Canvas エリア */}
             <section className='w-full h-screen flex items-center justify-center relative'>
                 <BonsaiCanvas />
                 <UIOverlay />
-                <SideMenu />
             </section>
 
+            {/* サイドメニューはセクション外に配置 */}
+            <SideMenu />
+
             {/* ギャラリーセクション */}
-            <section className='w-full py-12'>
+            <section className='w-full py-12' id='gallery'>
                 <div className='max-w-7xl mx-auto px-6'>
                     <h2 className='text-3xl font-bold mb-8 text-center'>
                         🎨 ギャラリー
@@ -37,10 +43,7 @@ export default function Creating() {
                 </div>
             </section>
 
-            {/* フッター */}
-            <footer className='w-full py-8 border-t border-gray-700 text-center text-gray-400'>
-                <p>© 2026 String Bonsai - Made with ❤️</p>
-            </footer>
+            <Footer />
         </div>
     );
 }

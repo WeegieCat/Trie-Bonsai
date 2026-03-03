@@ -2,16 +2,21 @@
 
 import Link from "next/link";
 import { AnimatedBonsai } from "@/components/AnimatedBonsai";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 export default function Home() {
     return (
         <div className='w-full bg-black text-white min-h-screen'>
+            <Header />
+
             <div className='max-w-7xl mx-auto px-6 py-12 text-center'>
                 <h1 className='text-5xl font-bold '>🌿 String Bonsai</h1>
                 <p className='text-gray-400 text-lg mt-4'>
                     文字列から美しい盆栽を生成するAIアートジェネレーター
                 </p>
             </div>
+
             {/* アニメーション盆栽 */}
             <section className='w-full h-screen flex items-center justify-center relative'>
                 <AnimatedBonsai />
@@ -26,12 +31,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* フッター */}
-            <footer className='w-full py-8 border-t border-gray-700 text-center text-gray-400 bg-gray-900'>
-                <p>
-                    © 2026 String Bonsai - Make something beautiful with words
-                </p>
-            </footer>
+            <Footer />
         </div>
     );
 }

@@ -13,7 +13,7 @@ export function SideMenu() {
             {/* オーバーレイ */}
             {isSideMenuOpen && (
                 <div
-                    className='fixed inset-0 bg-black bg-opacity-50 z-30'
+                    className='fixed inset-0 bg-black bg-opacity-20 z-30'
                     onClick={() => setIsSideMenuOpen(false)}
                 />
             )}
