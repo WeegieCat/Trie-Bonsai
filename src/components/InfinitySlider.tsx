@@ -6,7 +6,6 @@ interface BonsaiItem {
     id: string;
     imageUrl: string;
     title: string;
-    author: string;
 }
 
 export function InfinitySlider() {
@@ -21,7 +20,6 @@ export function InfinitySlider() {
                 id: `bonsai-${i}`,
                 imageUrl: `https://picsum.photos/300/300?random=${i}`,
                 title: `盆栽 #${i + 1}`,
-                author: `ユーザー${i + 1}`,
             }),
         );
 
@@ -54,9 +52,6 @@ export function InfinitySlider() {
                             <h3 className='text-white font-bold text-lg'>
                                 {item.title}
                             </h3>
-                            <p className='text-gray-400 text-sm'>
-                                作者: {item.author}
-                            </p>
                         </div>
                     </div>
                 ))}
@@ -75,9 +70,6 @@ export function InfinitySlider() {
                             <h3 className='text-white font-bold text-lg'>
                                 {item.title}
                             </h3>
-                            <p className='text-gray-400 text-sm'>
-                                作者: {item.author}
-                            </p>
                         </div>
                     </div>
                 ))}

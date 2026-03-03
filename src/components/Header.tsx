@@ -19,7 +19,7 @@ export function Header() {
                         作成
                     </Link>
                     <Link
-                        href='/#gallery'
+                        href='/gallery'
                         className='text-gray-300 hover:text-white transition'>
                         ギャラリー
                     </Link>
