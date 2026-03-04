@@ -55,13 +55,97 @@ export function UIOverlay() {
         (state) => state.resetCameraToDefault,
     );
 
+    const trimCanvas = (sourceCanvas: HTMLCanvasElement): HTMLCanvasElement => {
+        const ctx = sourceCanvas.getContext("2d");
+        if (!ctx) {
+            return sourceCanvas;
+        }
+
+        const width = sourceCanvas.width;
+        const height = sourceCanvas.height;
+        const imageData = ctx.getImageData(0, 0, width, height);
+        const pixels = imageData.data;
+
+        // 背景色を左上隅のピクセルから取得
+        const bgR = pixels[0];
+        const bgG = pixels[1];
+        const bgB = pixels[2];
+
+        let minX = width;
+        let minY = height;
+        let maxX = 0;
+        let maxY = 0;
+
+        // 背景色と異なるピクセルの境界を検出
+        const colorThreshold = 10; // 色の違いの閾値
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const index = (y * width + x) * 4;
+                const r = pixels[index];
+                const g = pixels[index + 1];
+                const b = pixels[index + 2];
+
+                // 背景色と異なるピクセルを検出
+                const diff =
+                    Math.abs(r - bgR) + Math.abs(g - bgG) + Math.abs(b - bgB);
+
+                if (diff > colorThreshold) {
+                    if (x < minX) minX = x;
+                    if (x > maxX) maxX = x;
+                    if (y < minY) minY = y;
+                    if (y > maxY) maxY = y;
+                }
+            }
+        }
+
+        // コンテンツが見つからない場合は元のcanvasを返す
+        if (minX > maxX || minY > maxY) {
+            return sourceCanvas;
+        }
+
+        // 余白を追加（20pxの余白）
+        const padding = 20;
+        minX = Math.max(0, minX - padding);
+        minY = Math.max(0, minY - padding);
+        maxX = Math.min(width - 1, maxX + padding);
+        maxY = Math.min(height - 1, maxY + padding);
+
+        // トリミングされた新しいcanvasを作成
+        const trimmedWidth = maxX - minX + 1;
+        const trimmedHeight = maxY - minY + 1;
+        const trimmedCanvas = document.createElement("canvas");
+        trimmedCanvas.width = trimmedWidth;
+        trimmedCanvas.height = trimmedHeight;
+
+        const trimmedCtx = trimmedCanvas.getContext("2d");
+        if (!trimmedCtx) {
+            return sourceCanvas;
+        }
+
+        // トリミングされた領域を描画
+        trimmedCtx.drawImage(
+            sourceCanvas,
+            minX,
+            minY,
+            trimmedWidth,
+            trimmedHeight,
+            0,
+            0,
+            trimmedWidth,
+            trimmedHeight,
+        );
+
+        return trimmedCanvas;
+    };
+
     const captureCanvasScreenshot = () => {
         const canvas = document.querySelector("canvas");
         if (!canvas) {
             return "";
         }
 
-        return canvas.toDataURL("image/png");
+        const trimmedCanvas = trimCanvas(canvas);
+        return trimmedCanvas.toDataURL("image/png");
     };
 
     const handleOpenDownloadModal = () => {
