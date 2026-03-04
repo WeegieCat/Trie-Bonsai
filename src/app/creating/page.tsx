@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BonsaiCanvas } from "@/components/Canvas";
 import { UIOverlay } from "@/components/UIOverlay";
@@ -9,10 +9,23 @@ import { InfinitySlider } from "@/components/InfinitySlider";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PostModal } from "@/components/PostModal";
+import { useStore } from "@/store/store";
+
+const DEFAULT_TRIE_INPUT =
+    "もちもちほっぺ もちもちもっちん もちもちもちち";
 
 export default function Creating() {
     const [isPostModalOpen, setIsPostModalOpen] = useState(false);
     const router = useRouter();
+    const setTreeType = useStore((state) => state.setTreeType);
+    const setInputValue = useStore((state) => state.setInputValue);
+    const generateBonsai = useStore((state) => state.generateBonsai);
+
+    useEffect(() => {
+        setTreeType("trie");
+        setInputValue(DEFAULT_TRIE_INPUT);
+        generateBonsai(DEFAULT_TRIE_INPUT);
+    }, [generateBonsai, setInputValue, setTreeType]);
 
     const handleSubmit = (name: string) => {
         setIsPostModalOpen(false);
