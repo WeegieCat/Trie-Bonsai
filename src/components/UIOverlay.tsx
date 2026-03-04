@@ -33,6 +33,18 @@ export function UIOverlay() {
         });
     };
 
+    const handleDownloadImage = () => {
+        const canvas = document.querySelector("canvas");
+        if (!canvas) {
+            return;
+        }
+
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/png");
+        link.download = `bonsai-${Date.now()}.png`;
+        link.click();
+    };
+
     return (
         <div className='absolute inset-0 pointer-events-none'>
             {/* トップバー */}
@@ -71,8 +83,25 @@ export function UIOverlay() {
                 </div>
             </div>
 
-            {/* 右下スクロールボタン */}
-            <div className='absolute bottom-24 right-8 pointer-events-auto'>
+            {/* 右下ボタングループ */}
+            <div className='absolute bottom-24 right-8 pointer-events-auto flex items-center gap-3'>
+                <button
+                    onClick={handleDownloadImage}
+                    className='w-14 h-14 bg-gray-800 bg-opacity-80 backdrop-blur hover:bg-gray-700 text-white rounded-full shadow-lg transition flex items-center justify-center'
+                    title='盆栽を画像保存'>
+                    <svg
+                        className='w-6 h-6'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'>
+                        <path
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth={2}
+                            d='M12 16V4m0 12l-4-4m4 4l4-4M5 20h14'
+                        />
+                    </svg>
+                </button>
                 <button
                     onClick={scrollToBottom}
                     className='w-14 h-14 bg-gray-800 bg-opacity-80 backdrop-blur hover:bg-gray-700 text-white rounded-full shadow-lg transition flex items-center justify-center'
