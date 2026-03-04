@@ -4,17 +4,17 @@
  */
 
 export interface BonsaiSubmitPayload {
-  title: string;
-  imageDataUrl: string;
-  treeData: unknown;
-  configData: unknown;
+    title: string;
+    imageDataUrl: string;
+    treeData: unknown;
+    configData: unknown;
 }
 
 export interface BonsaiSubmitResponse {
-  success: boolean;
-  id?: string;
-  url?: string;
-  error?: string;
+    success: boolean;
+    id?: string;
+    url?: string;
+    error?: string;
 }
 
 /**
@@ -22,21 +22,21 @@ export interface BonsaiSubmitResponse {
  * 現在はモック実装として即座に成功を返す
  */
 export async function submitBonsai(
-  payload: BonsaiSubmitPayload
+    payload: BonsaiSubmitPayload,
 ): Promise<BonsaiSubmitResponse> {
-  // Phase 7実装予定: fetch('WORKER_API_URL/api/bonsai', { method: 'POST', body: JSON.stringify(payload) })
-  
-  console.log('[Phase 6] submitBonsai called with payload:', {
-    title: payload.title,
-    imageSize: payload.imageDataUrl.length,
-    hasTreeData: !!payload.treeData,
-    hasConfigData: !!payload.configData,
-  });
-  
-  // モック成功レスポンス
-  return Promise.resolve({
-    success: true,
-    id: 'mock-id',
-    url: '/gallery',
-  });
+    // Phase 7実装予定: fetch('WORKER_API_URL/api/bonsai', { method: 'POST', body: JSON.stringify(payload) })
+
+    console.log("[Phase 6] submitBonsai called with payload:", {
+        title: payload.title,
+        imageSize: payload.imageDataUrl.length,
+        hasTreeData: !!payload.treeData,
+        hasConfigData: !!payload.configData,
+    });
+
+    // モック成功レスポンス
+    return Promise.resolve({
+        success: true,
+        id: "mock-id",
+        url: "/gallery",
+    });
 }
