@@ -2,7 +2,7 @@
 // 木のタイプ定義
 // ========================================
 
-export type TreeType = 'trie' | 'patricia' | 'suffix';
+export type TreeType = "trie" | "patricia" | "suffix";
 
 // ========================================
 // ノード型定義
