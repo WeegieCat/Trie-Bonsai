@@ -149,7 +149,7 @@ export function graphToNodes(graph: GraphInput): BonsaiData {
     const simNodes: SimNode[] = graph.nodes.map((node) => ({
         id: node.id,
         x: Math.random() * 20 - 10,
-        y: (depthMap.get(node.id) ?? 0) * 3 - 10,
+        y: (depthMap.get(node.id) ?? 0) * -3,
         z: Math.random() * 20 - 10,
         size: node.size,
         depth: depthMap.get(node.id) ?? 0,
@@ -195,7 +195,7 @@ export function graphToNodes(graph: GraphInput): BonsaiData {
     function forceY() {
         return function (alpha: number) {
             simNodes.forEach((node) => {
-                const targetY = node.depth * 3 - 10;
+                const targetY = node.depth * -3 - 10;
                 node.vy = (node.vy ?? 0) + (targetY - (node.y ?? 0)) * alpha * 0.3;
             });
         };
