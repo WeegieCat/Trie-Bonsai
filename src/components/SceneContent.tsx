@@ -109,7 +109,10 @@ export function SceneContent() {
                     {bonsaiData.nodes.map((node) => {
                         const ratio =
                             maxY === minY ? 0 : (node.y - minY) / (maxY - minY);
-                        const depthColor = getColorFromStops(gradientStops, ratio);
+                        const depthColor = getColorFromStops(
+                            gradientStops,
+                            ratio,
+                        );
 
                         return (
                             <mesh

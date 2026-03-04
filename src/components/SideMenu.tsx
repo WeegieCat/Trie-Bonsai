@@ -75,24 +75,6 @@ export function SideMenu() {
                             </p>
                         </div>
 
-                        {/* ノード色 */}
-                        <div>
-                            <label className='block text-gray-300 text-sm font-medium mb-2'>
-                                ノード色
-                            </label>
-                            <input
-                                type='color'
-                                value={config.nodeColor}
-                                onChange={(e) =>
-                                    setConfig({ nodeColor: e.target.value })
-                                }
-                                className='w-full h-10 rounded cursor-pointer'
-                            />
-                            <p className='text-gray-400 text-xs mt-1'>
-                                {config.nodeColor}
-                            </p>
-                        </div>
-
                         {/* ノードグラデーション */}
                         <div>
                             <label className='block text-gray-300 text-sm font-medium mb-2'>
@@ -119,26 +101,10 @@ export function SideMenu() {
                                 <option value='lemonGate'>Lemon Gate</option>
                                 <option value='oldHat'>Old Hat</option>
                                 <option value='wideMatrix'>Wide Matrix</option>
-                                <option value='burningSpring'>Burning Spring</option>
+                                <option value='burningSpring'>
+                                    Burning Spring
+                                </option>
                             </select>
-                        </div>
-
-                        {/* エッジ色 */}
-                        <div>
-                            <label className='block text-gray-300 text-sm font-medium mb-2'>
-                                エッジ色
-                            </label>
-                            <input
-                                type='color'
-                                value={config.edgeColor}
-                                onChange={(e) =>
-                                    setConfig({ edgeColor: e.target.value })
-                                }
-                                className='w-full h-10 rounded cursor-pointer'
-                            />
-                            <p className='text-gray-400 text-xs mt-1'>
-                                {config.edgeColor}
-                            </p>
                         </div>
 
                         {/* ノードサイズ */}
@@ -208,8 +174,6 @@ export function SideMenu() {
                     <button
                         onClick={() =>
                             setConfig({
-                                nodeColor: "#4CAF50",
-                                edgeColor: "#8B7355",
                                 nodeSize: 1,
                                 lightIntensity: 1,
                                 backgroundColor: "#1a1a1a",
