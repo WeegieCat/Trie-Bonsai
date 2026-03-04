@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import type { BonsaiData } from "@/types/bonsai";
+import { buildTrieFromInput, graphToNodes } from "@/lib/utils/trieConverter";
 
 interface BonsaiConfig {
     nodeColor: string;
@@ -11,6 +13,9 @@ interface BonsaiConfig {
 interface AppState {
     inputValue: string;
     setInputValue: (value: string) => void;
+    bonsaiData: BonsaiData | null;
+    setBonsaiData: (data: BonsaiData) => void;
+    generateBonsai: (input: string) => void;
     isSideMenuOpen: boolean;
     setIsSideMenuOpen: (open: boolean) => void;
     config: BonsaiConfig;
@@ -22,6 +27,15 @@ interface AppState {
 export const useStore = create<AppState>((set) => ({
     inputValue: "",
     setInputValue: (value) => set({ inputValue: value }),
+    bonsaiData: null,
+    setBonsaiData: (data) => set({ bonsaiData: data }),
+    generateBonsai: (input) => {
+        const trie = buildTrieFromInput(input);
+        const graph = trie.toGraph();
+        const data = graphToNodes(graph);
+
+        set({ bonsaiData: data });
+    },
     isSideMenuOpen: false,
     setIsSideMenuOpen: (open) => set({ isSideMenuOpen: open }),
     config: {
