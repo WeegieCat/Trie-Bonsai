@@ -9,7 +9,6 @@ interface BonsaiItem {
     id: string;
     title: string;
     imageUrl: string;
-    createdAt: string;
     likes: number;
 }
 
@@ -18,6 +17,17 @@ export default function Gallery() {
     const [isLoading, setIsLoading] = useState(true);
     const [sortBy, setSortBy] = useState<"recent" | "popular">("recent");
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedBonsai, setSelectedBonsai] = useState<BonsaiItem | null>(
+        null,
+    );
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+    const [isDetailModalAnimating, setIsDetailModalAnimating] = useState(false);
+
+    useEffect(() => {
+        if (isDetailModalOpen) {
+            setIsDetailModalAnimating(true);
+        }
+    }, [isDetailModalOpen]);
 
     useEffect(() => {
         // モックデータ（実際にはAPIから取得）
@@ -25,9 +35,6 @@ export default function Gallery() {
             id: `bonsai-${i}`,
             title: `盆栽作品 #${i + 1}`,
             imageUrl: `https://picsum.photos/400/400?random=${i}`,
-            createdAt: new Date(
-                Date.now() - Math.random() * 10000000000,
-            ).toLocaleDateString("ja-JP"),
             likes: Math.floor(Math.random() * 500),
         }));
 
@@ -46,6 +53,19 @@ export default function Gallery() {
     const filteredBonsais = bonsais.filter((bonsai) =>
         bonsai.title.toLowerCase().includes(searchQuery.toLowerCase()),
     );
+
+    const handleOpenDetailModal = (bonsai: BonsaiItem) => {
+        setSelectedBonsai(bonsai);
+        setIsDetailModalOpen(true);
+    };
+
+    const handleCloseDetailModal = () => {
+        setIsDetailModalAnimating(false);
+        setTimeout(() => {
+            setIsDetailModalOpen(false);
+            setSelectedBonsai(null);
+        }, 300);
+    };
 
     return (
         <div className='w-full bg-black text-white min-h-screen'>
@@ -110,7 +130,13 @@ export default function Gallery() {
                 ) : (
                     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
                         {filteredBonsais.map((bonsai) => (
-                            <BonsaiCard key={bonsai.id} {...bonsai} />
+                            <BonsaiCard
+                                key={bonsai.id}
+                                {...bonsai}
+                                onDetailClick={() =>
+                                    handleOpenDetailModal(bonsai)
+                                }
+                            />
                         ))}
                     </div>
                 )}
@@ -145,6 +171,48 @@ export default function Gallery() {
                     </div>
                 </div>
             </main>
+
+            {isDetailModalOpen && selectedBonsai && (
+                <div
+                    className={`fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 transition-opacity duration-300 ${
+                        isDetailModalAnimating ? "opacity-100" : "opacity-0"
+                    }`}
+                    onClick={handleCloseDetailModal}>
+                    <div
+                        className={`w-full max-w-2xl rounded-xl bg-gray-900 p-6 shadow-2xl border border-gray-700 transform transition-all duration-300 ease-out ${
+                            isDetailModalAnimating
+                                ? "translate-y-0 opacity-100"
+                                : "-translate-y-12 opacity-0"
+                        }`}
+                        onClick={(e) => e.stopPropagation()}>
+                        <img
+                            src={selectedBonsai.imageUrl}
+                            alt={selectedBonsai.title}
+                            className='w-full h-72 object-cover rounded-lg mb-5'
+                        />
+
+                        <div className='mb-6'>
+                            <p className='text-xl font-bold text-white mb-2'>
+                                {selectedBonsai.title}
+                            </p>
+                            <p className='text-gray-300'>
+                                いいね数: {selectedBonsai.likes}
+                            </p>
+                            <p className='text-gray-400 text-sm mt-2'>
+                                作品ID: {selectedBonsai.id}
+                            </p>
+                        </div>
+
+                        <div className='flex justify-end'>
+                            <button
+                                onClick={handleCloseDetailModal}
+                                className='px-5 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition'>
+                                閉じる
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <Footer />
         </div>
