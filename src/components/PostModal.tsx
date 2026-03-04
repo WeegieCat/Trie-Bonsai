@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useStore } from "@/store/store";
 
 interface PostModalProps {
     isOpen: boolean;
@@ -12,6 +13,8 @@ export function PostModal({ isOpen, onClose, onSubmit }: PostModalProps) {
     const [bonsaiName, setBonsaiName] = useState("");
     const [isAnimating, setIsAnimating] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
+    const config = useStore((state) => state.config);
+    const setConfig = useStore((state) => state.setConfig);
 
     useEffect(() => {
         if (isOpen) {
@@ -19,6 +22,18 @@ export function PostModal({ isOpen, onClose, onSubmit }: PostModalProps) {
 
             let isCanceled = false;
             const captureScreenshot = async () => {
+                // 背景が雪や夜明の場合、一時的に単色に変更
+                const originalBackgroundType = config.backgroundType;
+                const needsBackgroundChange =
+                    originalBackgroundType === "stars" ||
+                    originalBackgroundType === "dawn";
+
+                if (needsBackgroundChange) {
+                    setConfig({ backgroundType: "solid" });
+                    // 背景変更の反映を待つ
+                    await new Promise((resolve) => setTimeout(resolve, 100));
+                }
+
                 await new Promise((resolve) => requestAnimationFrame(resolve));
                 const canvas = document.querySelector("canvas");
 
@@ -26,10 +41,19 @@ export function PostModal({ isOpen, onClose, onSubmit }: PostModalProps) {
                     if (!isCanceled) {
                         setPreviewImage("");
                     }
+                    // 背景を元に戻す
+                    if (needsBackgroundChange) {
+                        setConfig({ backgroundType: originalBackgroundType });
+                    }
                     return;
                 }
 
                 setPreviewImage(canvas.toDataURL("image/png"));
+
+                // 背景を元に戻す
+                if (needsBackgroundChange) {
+                    setConfig({ backgroundType: originalBackgroundType });
+                }
             };
 
             captureScreenshot();
@@ -38,7 +62,7 @@ export function PostModal({ isOpen, onClose, onSubmit }: PostModalProps) {
                 isCanceled = true;
             };
         }
-    }, [isOpen]);
+    }, [isOpen, config.backgroundType, setConfig]);
 
     const handleSubmit = () => {
         if (!bonsaiName.trim()) return;
