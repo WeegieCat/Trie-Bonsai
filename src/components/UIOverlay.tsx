@@ -3,6 +3,12 @@
 import { useState } from "react";
 import { useStore } from "@/store/store";
 
+const BONSAI_TITLES = {
+    trie: "🌳 Prefix Bonsai",
+    patricia: "🌲 Patricia Bonsai",
+    suffix: "🍂 Suffix Bonsai",
+} as const;
+
 export function UIOverlay() {
     const [currentInput, setCurrentInput] = useState("");
     const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
@@ -13,6 +19,7 @@ export function UIOverlay() {
     const setInputValue = useStore((state) => state.setInputValue);
     const generateBonsai = useStore((state) => state.generateBonsai);
     const trieText = useStore((state) => state.trieText);
+    const treeType = useStore((state) => state.treeType);
     const setIsSideMenuOpen = useStore((state) => state.setIsSideMenuOpen);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,7 +89,7 @@ export function UIOverlay() {
                     <div className='max-w-2xl mx-auto'>
                         {/* タイトル */}
                         <h1 className='text-4xl font-bold text-white mb-6 text-center'>
-                            🌿 Trie Bonsai
+                            {BONSAI_TITLES[treeType]}
                         </h1>
 
                         {/* 入力フォーム */}
