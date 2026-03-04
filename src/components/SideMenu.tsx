@@ -60,12 +60,14 @@ export function SideMenu() {
                                     }
                                 }}
                                 className='w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'>
-                                <option value='trie'>トライ木 (Trie)</option>
+                                <option value='trie'>
+                                    プレフィックス木(接頭辞木)
+                                </option>
                                 <option value='patricia'>
-                                    パトリシア木 (Patricia/Radix)
+                                    パトリシア木(基数木)
                                 </option>
                                 <option value='suffix'>
-                                    サフィックス木 (Suffix Tree)
+                                    サフィックス木(接尾辞木)
                                 </option>
                             </select>
                             <p className='text-gray-400 text-xs mt-2'>

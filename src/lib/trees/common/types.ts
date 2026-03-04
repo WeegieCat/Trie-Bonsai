@@ -13,9 +13,9 @@ export type TreeBuilder = (input: string) => TreeStructure;
  * 木タイプの表示名
  */
 export const TREE_TYPE_LABELS: Record<TreeType, string> = {
-    trie: "トライ木 (Trie)",
-    patricia: "パトリシア木 (Patricia/Radix)",
-    suffix: "サフィックス木 (Suffix Tree)",
+    trie: "プレフィックス木(接頭辞木)",
+    patricia: "パトリシア木(基数木)",
+    suffix: "サフィックス木(接尾辞木)",
 };
 
 /**
