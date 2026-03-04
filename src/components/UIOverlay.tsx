@@ -64,25 +64,6 @@ export function UIOverlay() {
         return canvas.toDataURL("image/png");
     };
 
-    const handleDownloadImage = async () => {
-        const canvas = document.querySelector("canvas");
-        if (!canvas) {
-            return;
-        }
-
-        // カメラをデフォルト位置にリセット
-        if (resetCameraToDefault) {
-            resetCameraToDefault();
-            // レンダリングが完了するまで少し待機
-            await new Promise((resolve) => setTimeout(resolve, 300));
-        }
-
-        const link = document.createElement("a");
-        link.href = canvas.toDataURL("image/png");
-        link.download = `bonsai-${Date.now()}.png`;
-        link.click();
-    };
-
     const handleOpenDownloadModal = () => {
         setDownloadPreviewImage(captureCanvasScreenshot());
         setIsDownloadModalAnimating(true);
@@ -97,7 +78,14 @@ export function UIOverlay() {
     };
 
     const handleConfirmDownload = () => {
-        handleDownloadImage();
+        if (!downloadPreviewImage) {
+            return;
+        }
+
+        const link = document.createElement("a");
+        link.href = downloadPreviewImage;
+        link.download = `bonsai-${Date.now()}.png`;
+        link.click();
         handleCloseDownloadModal();
     };
 
