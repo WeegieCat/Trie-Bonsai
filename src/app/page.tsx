@@ -1,11 +1,24 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
-import { AnimatedBonsai } from "@/components/AnimatedBonsai";
+import { BonsaiCanvas } from "@/components/Canvas";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { DEFAULT_TRIE_INPUT } from "@/lib/constants/defaultTrieInput";
+import { useStore } from "@/store/store";
 
 export default function Home() {
+    const setTreeType = useStore((state) => state.setTreeType);
+    const setInputValue = useStore((state) => state.setInputValue);
+    const generateBonsai = useStore((state) => state.generateBonsai);
+
+    useEffect(() => {
+        setTreeType("trie");
+        setInputValue(DEFAULT_TRIE_INPUT);
+        generateBonsai(DEFAULT_TRIE_INPUT);
+    }, [generateBonsai, setInputValue, setTreeType]);
+
     return (
         <div className='w-full bg-black text-white min-h-screen'>
             <Header />
@@ -17,9 +30,9 @@ export default function Home() {
                 </p>
             </div>
 
-            {/* アニメーション盆栽 */}
+            {/* Creatingページと同一の3Dトライ木デモ */}
             <section className='w-full h-screen flex items-center justify-center relative'>
-                <AnimatedBonsai />
+                <BonsaiCanvas />
 
                 {/* CTA ボタン */}
                 <div className='absolute bottom-12 left-1/2 transform -translate-x-1/2 z-10'>

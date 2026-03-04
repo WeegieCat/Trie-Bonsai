@@ -9,9 +9,8 @@ import { InfinitySlider } from "@/components/InfinitySlider";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { PostModal } from "@/components/PostModal";
+import { DEFAULT_TRIE_INPUT } from "@/lib/constants/defaultTrieInput";
 import { useStore } from "@/store/store";
-
-const DEFAULT_TRIE_INPUT = "もちもちほっぺ もちもちもっちん もちもちもちち";
 
 export default function Creating() {
     const [isPostModalOpen, setIsPostModalOpen] = useState(false);
