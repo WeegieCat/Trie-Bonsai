@@ -73,6 +73,9 @@ export function SideMenu() {
                             <p className='text-gray-400 text-xs mt-2'>
                                 {TREE_TYPE_LABELS[treeType]}
                             </p>
+                            <p className='text-gray-500 text-xs mt-1'>
+                                📍 表示する木構造の種類を選択します
+                            </p>
                         </div>
 
                         {/* ノードグラデーション */}
@@ -105,6 +108,9 @@ export function SideMenu() {
                                     Burning Spring
                                 </option>
                             </select>
+                            <p className='text-gray-500 text-xs mt-2'>
+                                🎨 ノードの色を根から葉へ段階的に変化させます
+                            </p>
                         </div>
 
                         {/* ノードサイズ */}
@@ -125,6 +131,9 @@ export function SideMenu() {
                                 }
                                 className='w-full'
                             />
+                            <p className='text-gray-500 text-xs mt-2'>
+                                📏 3D空間に表示するノードのサイズを調整します
+                            </p>
                         </div>
 
                         {/* ライト強度 */}
@@ -147,6 +156,9 @@ export function SideMenu() {
                                 }
                                 className='w-full'
                             />
+                            <p className='text-gray-500 text-xs mt-2'>
+                                💡 シーンの照明の明るさを調整します
+                            </p>
                         </div>
 
                         {/* 背景色 */}
@@ -166,6 +178,9 @@ export function SideMenu() {
                             />
                             <p className='text-gray-400 text-xs mt-1'>
                                 {config.backgroundColor}
+                            </p>
+                            <p className='text-gray-500 text-xs mt-1'>
+                                🎭 3D空間の背景色を変更します
                             </p>
                         </div>
                     </div>
