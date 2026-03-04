@@ -144,7 +144,7 @@ export function graphToNodes(graph: GraphInput): BonsaiData {
                 positionedNodes.push({
                     id: node.id,
                     x: 0,
-                    y: 0,
+                    y: -10,
                     z: 0,
                     size: node.size,
                 });
