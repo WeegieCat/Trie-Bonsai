@@ -190,7 +190,7 @@ export function SideMenu() {
                                     onClick={() =>
                                         setConfig({ backgroundType: "stars" })
                                     }
-                                    className={`flex-1 px-4 py-2 rounded-lg font-medium transition ${
+                                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition ${
                                         config.backgroundType === "stars"
                                             ? "bg-blue-600 text-white"
                                             : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -199,20 +199,33 @@ export function SideMenu() {
                                 </button>
                                 <button
                                     onClick={() =>
+                                        setConfig({ backgroundType: "dawn" })
+                                    }
+                                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition ${
+                                        config.backgroundType === "dawn"
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                                    }`}>
+                                    🌅 夜明け
+                                </button>
+                                <button
+                                    onClick={() =>
                                         setConfig({ backgroundType: "solid" })
                                     }
-                                    className={`flex-1 px-4 py-2 rounded-lg font-medium transition ${
+                                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition ${
                                         config.backgroundType === "solid"
                                             ? "bg-blue-600 text-white"
                                             : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                                     }`}>
-                                     単色
+                                    ⬛ 単色
                                 </button>
                             </div>
                             <p className='text-gray-400 text-xs mt-2'>
                                 {config.backgroundType === "stars"
-                                    ? "⭐ 移動する星空背景"
-                                    : "🧿 単色の背景"}
+                                    ? "❄️ 移動する雪の背景"
+                                    : config.backgroundType === "dawn"
+                                      ? "🌅 夜明けのグラデーション背景"
+                                      : "⬛ 単色の背景"}
                             </p>
                         </div>
                     </div>

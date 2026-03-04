@@ -126,11 +126,7 @@ function DawnBackground() {
     return (
         <mesh position={[0, 0, -50]} rotation={[0, 0, 0]}>
             <sphereGeometry args={[100, 64, 64]} />
-            <meshBasicMaterial
-                color='#1a1a2e'
-                side={1}
-                depthWrite={false}
-            />
+            <meshBasicMaterial color='#1a1a2e' side={1} depthWrite={false} />
             <mesh position={[0, 0, 0]}>
                 <planeGeometry args={[200, 200]} />
                 <shaderMaterial
