@@ -1,58 +1,72 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { BonsaiCard } from "@/components/BonsaiCard";
+import { fetchBonsaiList, type BonsaiGalleryItem } from "@/lib/api/bonsai";
 
-interface BonsaiItem {
-    id: string;
-    title: string;
-    imageUrl: string;
-    likes: number;
-}
+type BonsaiItem = BonsaiGalleryItem;
 
 export default function Gallery() {
     const [bonsais, setBonsais] = useState<BonsaiItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState<"recent" | "popular">("recent");
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedBonsai, setSelectedBonsai] = useState<BonsaiItem | null>(
         null,
     );
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-    const [isDetailModalAnimating, setIsDetailModalAnimating] = useState(false);
 
     useEffect(() => {
-        if (isDetailModalOpen) {
-            setIsDetailModalAnimating(true);
-        }
-    }, [isDetailModalOpen]);
+        let cancelled = false;
 
-    useEffect(() => {
-        // モックデータ（実際にはAPIから取得）
-        const mockData: BonsaiItem[] = Array.from({ length: 24 }, (_, i) => ({
-            id: `bonsai-${i}`,
-            title: `盆栽作品 #${i + 1}`,
-            imageUrl: `https://picsum.photos/400/400?random=${i}`,
-            likes: Math.floor(Math.random() * 500),
-        }));
+        const load = async () => {
+            try {
+                setIsLoading(true);
+                setError(null);
+                const items = await fetchBonsaiList(100);
 
-        // ソート処理
-        const sorted = [...mockData].sort((a, b) => {
+                if (!cancelled) {
+                    setBonsais(items);
+                }
+            } catch (loadError) {
+                if (!cancelled) {
+                    setError(
+                        loadError instanceof Error
+                            ? loadError.message
+                            : "ギャラリーデータの取得に失敗しました",
+                    );
+                    setBonsais([]);
+                }
+            } finally {
+                if (!cancelled) {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        load();
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    const filteredBonsais = useMemo(() => {
+        const searched = bonsais.filter((bonsai) =>
+            bonsai.title.toLowerCase().includes(searchQuery.toLowerCase()),
+        );
+
+        return [...searched].sort((a, b) => {
             if (sortBy === "popular") {
                 return b.likes - a.likes;
             }
-            return 0;
+
+            return b.createdAt - a.createdAt;
         });
-
-        setBonsais(sorted);
-        setIsLoading(false);
-    }, [sortBy]);
-
-    const filteredBonsais = bonsais.filter((bonsai) =>
-        bonsai.title.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+    }, [bonsais, searchQuery, sortBy]);
 
     const handleOpenDetailModal = (bonsai: BonsaiItem) => {
         setSelectedBonsai(bonsai);
@@ -60,11 +74,8 @@ export default function Gallery() {
     };
 
     const handleCloseDetailModal = () => {
-        setIsDetailModalAnimating(false);
-        setTimeout(() => {
-            setIsDetailModalOpen(false);
-            setSelectedBonsai(null);
-        }, 300);
+        setIsDetailModalOpen(false);
+        setSelectedBonsai(null);
     };
 
     return (
@@ -127,6 +138,13 @@ export default function Gallery() {
                         <div className='inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500'></div>
                         <p className='text-gray-400 mt-4'>読み込み中...</p>
                     </div>
+                ) : error ? (
+                    <div className='text-center py-20'>
+                        <p className='text-red-400 text-lg mb-3'>
+                            データの読み込みに失敗しました
+                        </p>
+                        <p className='text-gray-400 text-sm'>{error}</p>
+                    </div>
                 ) : (
                     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
                         {filteredBonsais.map((bonsai) => (
@@ -174,16 +192,10 @@ export default function Gallery() {
 
             {isDetailModalOpen && selectedBonsai && (
                 <div
-                    className={`fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 transition-opacity duration-300 ${
-                        isDetailModalAnimating ? "opacity-100" : "opacity-0"
-                    }`}
+                    className='fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 transition-opacity duration-300 opacity-100'
                     onClick={handleCloseDetailModal}>
                     <div
-                        className={`w-full max-w-2xl rounded-xl bg-gray-900 p-6 shadow-2xl border border-gray-700 transform transition-all duration-300 ease-out ${
-                            isDetailModalAnimating
-                                ? "translate-y-0 opacity-100"
-                                : "-translate-y-12 opacity-0"
-                        }`}
+                        className='w-full max-w-2xl rounded-xl bg-gray-900 p-6 shadow-2xl border border-gray-700 transform transition-all duration-300 ease-out translate-y-0 opacity-100'
                         onClick={(e) => e.stopPropagation()}>
                         <img
                             src={selectedBonsai.imageUrl}

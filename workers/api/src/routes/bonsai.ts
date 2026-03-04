@@ -62,11 +62,11 @@ function getImageExtension(mimeType: string): string {
     }
 }
 
-function buildImageUrl(env: Env, objectKey: string): string {
+function buildImageUrl(env: Env, origin: string, objectKey: string): string {
     const baseUrl = env.R2_PUBLIC_BASE_URL?.trim();
 
     if (!baseUrl) {
-        return objectKey;
+        return `${origin}/api/bonsai/object?key=${encodeURIComponent(objectKey)}`;
     }
 
     return `${baseUrl.replace(/\/$/, "")}/${objectKey}`;
@@ -88,6 +88,106 @@ async function ensureSchema(db: D1Database) {
         )
         .run();
 }
+
+bonsaiRouter.get("/", async (c) => {
+    try {
+        await ensureSchema(c.env.DB);
+
+        const limitParam = c.req.query("limit");
+        const parsedLimit = Number.parseInt(limitParam ?? "24", 10);
+        const limit = Number.isFinite(parsedLimit)
+            ? Math.min(Math.max(parsedLimit, 1), 100)
+            : 24;
+
+        const result = await c.env.DB.prepare(
+            `
+            SELECT id, title, image_url, created_at
+            FROM bonsais
+            ORDER BY created_at DESC
+            LIMIT ?1
+            `,
+        )
+            .bind(limit)
+            .all<{
+                id: string;
+                title: string;
+                image_url: string;
+                created_at: number;
+            }>();
+
+        const items = (result.results ?? []).map((row) => ({
+            id: row.id,
+            title: row.title,
+            imageUrl: row.image_url,
+            createdAt: row.created_at,
+            likes: 0,
+        }));
+
+        return c.json(
+            {
+                success: true,
+                items,
+            },
+            200,
+        );
+    } catch (error) {
+        const message =
+            error instanceof Error ? error.message : "Unexpected server error";
+
+        return c.json(
+            {
+                success: false,
+                error: message,
+            },
+            500,
+        );
+    }
+});
+
+bonsaiRouter.get("/object", async (c) => {
+    try {
+        const objectKey = c.req.query("key");
+
+        if (!objectKey) {
+            return c.json(
+                {
+                    success: false,
+                    error: "Object key is required",
+                },
+                400,
+            );
+        }
+
+        const object = await c.env.BONSAI_BUCKET.get(objectKey);
+
+        if (!object) {
+            return c.json(
+                {
+                    success: false,
+                    error: "Image not found",
+                },
+                404,
+            );
+        }
+
+        const headers = new Headers();
+        object.writeHttpMetadata(headers);
+        headers.set("etag", object.httpEtag);
+
+        return new Response(object.body, { headers, status: 200 });
+    } catch (error) {
+        const message =
+            error instanceof Error ? error.message : "Unexpected server error";
+
+        return c.json(
+            {
+                success: false,
+                error: message,
+            },
+            500,
+        );
+    }
+});
 
 bonsaiRouter.post("/", async (c) => {
     try {
@@ -119,7 +219,8 @@ bonsaiRouter.post("/", async (c) => {
         const id = crypto.randomUUID();
         const extension = getImageExtension(mimeType);
         const objectKey = `bonsai/${id}.${extension}`;
-        const imageUrl = buildImageUrl(c.env, objectKey);
+        const origin = new URL(c.req.url).origin;
+        const imageUrl = buildImageUrl(c.env, origin, objectKey);
 
         const r2Object = await c.env.BONSAI_BUCKET.put(objectKey, bytes, {
             httpMetadata: {
