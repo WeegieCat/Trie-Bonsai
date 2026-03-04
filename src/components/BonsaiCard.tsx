@@ -6,17 +6,10 @@ interface BonsaiCardProps {
     id: string;
     title: string;
     imageUrl: string;
-    createdAt: string;
     likes: number;
 }
 
-export function BonsaiCard({
-    id,
-    title,
-    imageUrl,
-    createdAt,
-    likes,
-}: BonsaiCardProps) {
+export function BonsaiCard({ id, title, imageUrl, likes }: BonsaiCardProps) {
     const [isLiked, setIsLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(likes);
 
@@ -46,10 +39,6 @@ export function BonsaiCard({
                 <h3 className='text-lg font-bold text-white mb-2 line-clamp-1'>
                     {title}
                 </h3>
-
-                <div className='flex items-center justify-end text-sm text-gray-400 mb-3'>
-                    <span className='text-xs'>{createdAt}</span>
-                </div>
 
                 <div className='flex items-center justify-start'>
                     <button
