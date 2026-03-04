@@ -1,5 +1,5 @@
 import type { BonsaiData, GraphEdge, GraphNode } from "@/types/bonsai";
-import { Trie } from "@/lib/trie/Trie";
+import { Trie } from "@/lib/trees/trie/Trie";
 
 type GraphInput = {
     nodes: GraphNode[];
@@ -11,11 +11,10 @@ export function buildTrieFromInput(input: string): Trie {
     const words = sanitizeInput(input);
 
     words.forEach((word) => {
-        // 単一文字列でも分岐が生まれるよう、すべての接尾辞を登録
-        const suffixes = collectSuffixes(word);
-        suffixes.forEach((suffix) => {
-            trie.insert(suffix);
-        });
+        // オプションA：すべての接頭辞を登録
+        for (let i = 1; i <= word.length; i++) {
+            trie.insert(word.substring(0, i));
+        }
     });
 
     return trie;
@@ -123,14 +122,4 @@ function sanitizeInput(input: string): string[] {
         .split(/\s+/)
         .map((word) => word.trim())
         .filter((word) => word.length > 0);
-}
-
-function collectSuffixes(word: string): string[] {
-    const suffixSet = new Set<string>();
-
-    for (let i = 0; i < word.length; i++) {
-        suffixSet.add(word.substring(i));
-    }
-
-    return Array.from(suffixSet);
 }

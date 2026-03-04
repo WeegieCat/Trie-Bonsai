@@ -79,12 +79,6 @@ export function SceneContent() {
                     </mesh>
                 </>
             )}
-
-            {/* 地面 */}
-            <mesh position={[0, -2, 0]} receiveShadow>
-                <planeGeometry args={[20, 20]} />
-                <meshStandardMaterial color='#222222' />
-            </mesh>
         </>
     );
 }
