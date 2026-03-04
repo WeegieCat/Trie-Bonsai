@@ -158,7 +158,7 @@ export function UIOverlay() {
         setIsDownloadModalAnimating(false);
         setTimeout(() => {
             setIsDownloadModalOpen(false);
-        }, 300);
+        }, 500);
     };
 
     const handleConfirmDownload = () => {
@@ -276,15 +276,15 @@ export function UIOverlay() {
 
             {isDownloadModalOpen && (
                 <div
-                    className={`fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 transition-opacity duration-300 ${
+                    className={`fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 transition-opacity duration-500 ${
                         isDownloadModalAnimating ? "opacity-100" : "opacity-0"
                     }`}
                     onClick={handleCloseDownloadModal}>
                     <div
-                        className={`w-full max-w-md rounded-xl bg-gray-900 p-6 shadow-2xl border border-gray-700 transform transition-all duration-300 ease-out ${
+                        className={`w-full max-w-md rounded-xl bg-gray-900 p-6 shadow-2xl border border-gray-700 transform transition-all duration-500 ease-in-out ${
                             isDownloadModalAnimating
-                                ? "translate-y-0 opacity-100"
-                                : "-translate-y-12 opacity-0"
+                                ? "translate-y-0 opacity-100 scale-100"
+                                : "-translate-y-32 opacity-0 scale-95"
                         }`}
                         onClick={(e) => e.stopPropagation()}>
                         <h3 className='text-2xl font-bold text-white mb-3 text-center'>
