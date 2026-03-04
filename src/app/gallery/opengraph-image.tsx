@@ -10,45 +10,40 @@ export const contentType = "image/png";
 
 export default function Image() {
     return new ImageResponse(
-        (
+        <div
+            style={{
+                fontSize: 128,
+                background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "white",
+                fontFamily: "system-ui",
+                gap: "20px",
+                padding: "40px",
+            }}>
             <div
                 style={{
-                    fontSize: 128,
-                    background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-                    width: "100%",
-                    height: "100%",
+                    fontSize: 100,
+                }}>
+                🌿
+            </div>
+            <div
+                style={{
                     display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "white",
-                    fontFamily: "system-ui",
-                    gap: "20px",
-                    padding: "40px",
-                }}
-            >
-                <div
-                    style={{
-                        fontSize: 100,
-                    }}
-                >
-                    🌿
+                    flexDirection: "column",
+                    gap: "10px",
+                }}>
+                <div style={{ fontSize: 60, fontWeight: "bold" }}>
+                    String Bonsai
                 </div>
-                <div
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "10px",
-                    }}
-                >
-                    <div style={{ fontSize: 60, fontWeight: "bold" }}>
-                        String Bonsai
-                    </div>
-                    <div style={{ fontSize: 32, color: "#9ca3af" }}>
-                        Gallery - Create & Share 3D Text Trees
-                    </div>
+                <div style={{ fontSize: 32, color: "#9ca3af" }}>
+                    Gallery - Create & Share 3D Text Trees
                 </div>
             </div>
-        ),
+        </div>,
         {
             ...size,
         },

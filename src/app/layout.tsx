@@ -12,15 +12,18 @@ const geistMono = Geist_Mono({
     subsets: ["latin"],
 });
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://triebonsai.pages.dev";
+const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL || "https://triebonsai.pages.dev";
 
 export const metadata: Metadata = {
     title: "🌿 String Bonsai - Create & Share 3D Text Trees",
-    description: "Generate beautiful 3D bonsai trees from text strings. Plant your words as digital bonsai art.",
+    description:
+        "Generate beautiful 3D bonsai trees from text strings. Plant your words as digital bonsai art.",
     metadataBase: new URL(baseUrl),
     openGraph: {
         title: "🌿 String Bonsai - Create & Share 3D Text Trees",
-        description: "Generate beautiful 3D bonsai trees from text strings. Plant your words as digital bonsai art.",
+        description:
+            "Generate beautiful 3D bonsai trees from text strings. Plant your words as digital bonsai art.",
         url: baseUrl,
         siteName: "String Bonsai",
         locale: "ja_JP",

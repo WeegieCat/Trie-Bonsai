@@ -19,6 +19,7 @@ wrangler login
 ### 1.2 プロジェクト作成
 
 #### Pages プロジェクト
+
 ```bash
 # 1. Cloudflare Dashboard で新規プロジェクト作成
 cd triebonsai
@@ -27,6 +28,7 @@ wrangler pages project create triebonsai
 ```
 
 #### Workers (API) プロジェクト
+
 ```bash
 cd workers/api
 wrangler deploy
@@ -93,6 +95,7 @@ CLOUDFLARE_WORKERS_PROJECT_NAME=triebonsai-edge-api-prod
 ```
 
 APIトークン取得：
+
 1. Cloudflare Dashboard → My Account → API Tokens
 2. Create Token → "Pages" テンプレート使用
 3. トークンコピー
@@ -105,43 +108,43 @@ APIトークン取得：
 name: Deploy to Cloudflare
 
 on:
-  push:
-    branches: [main, dev]
+    push:
+        branches: [main, dev]
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: 'true'
-    
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-    
-    # Pages デプロイ
-    - name: Deploy to Cloudflare Pages
-      env:
-        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      run: |
-        npm install -g wrangler
-        npm ci
-        npm run build
-        npx wrangler pages deploy dist --project-name=${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME }} --branch=${{ github.ref_name }}
-    
-    # Workers デプロイ
-    - name: Deploy to Cloudflare Workers
-      working-directory: workers/api
-      env:
-        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      run: |
-        npm ci
-        npm run build
-        npx wrangler deploy --env production
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  submodules: "true"
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+
+            # Pages デプロイ
+            - name: Deploy to Cloudflare Pages
+              env:
+                  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+              run: |
+                  npm install -g wrangler
+                  npm ci
+                  npm run build
+                  npx wrangler pages deploy dist --project-name=${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME }} --branch=${{ github.ref_name }}
+
+            # Workers デプロイ
+            - name: Deploy to Cloudflare Workers
+              working-directory: workers/api
+              env:
+                  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+              run: |
+                  npm ci
+                  npm run build
+                  npx wrangler deploy --env production
 ```
 
 ---
@@ -186,6 +189,7 @@ curl https://api.triebonsai.pages.dev/healthz
 ## トラブルシューティング
 
 ### Pages ビルドエラー
+
 ```bash
 # ローカルビルド確認
 npm run build
@@ -195,6 +199,7 @@ npm run build
 ```
 
 ### Workers デプロイエラー
+
 ```bash
 # 型チェック
 cd workers/api
@@ -205,6 +210,7 @@ wrangler d1 list
 ```
 
 ### CORS エラー
+
 ```bash
 # wrangler.toml の CORS_ORIGIN 確認
 # Pages URL と一致しているか確認
