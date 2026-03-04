@@ -4,12 +4,7 @@ import { OrbitControls, PerspectiveCamera, Line } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-    BufferGeometry,
-    Color,
-    Float32BufferAttribute,
-    Points,
-} from "three";
+import { BufferGeometry, Color, Float32BufferAttribute, Points } from "three";
 import { useStore } from "@/store/store";
 import type { BonsaiData, GraphEdge, GraphNode } from "@/types/bonsai";
 
@@ -125,6 +120,47 @@ function getRevealOrder(data: BonsaiData): GraphNode[] {
 
 function getEdgeKey(edge: GraphEdge, index: number): string {
     return `${edge.from}-${edge.to}-${index}`;
+}
+
+function DawnBackground() {
+    return (
+        <mesh position={[0, 0, -50]} rotation={[0, 0, 0]}>
+            <sphereGeometry args={[100, 64, 64]} />
+            <meshBasicMaterial
+                color='#1a1a2e'
+                side={1}
+                depthWrite={false}
+            />
+            <mesh position={[0, 0, 0]}>
+                <planeGeometry args={[200, 200]} />
+                <shaderMaterial
+                    vertexShader={`
+                        varying vec2 vUv;
+                        void main() {
+                            vUv = uv;
+                            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                        }
+                    `}
+                    fragmentShader={`
+                        varying vec2 vUv;
+                        void main() {
+                            vec3 colorTop = vec3(0.05, 0.05, 0.15);
+                            vec3 colorHorizon = vec3(1.0, 0.5, 0.3);
+                            vec3 colorBottom = vec3(0.1, 0.2, 0.4);
+                            
+                            float mixValue = smoothstep(0.3, 0.7, vUv.y);
+                            vec3 color = mix(colorBottom, colorHorizon, smoothstep(0.0, 0.5, vUv.y));
+                            color = mix(color, colorTop, smoothstep(0.5, 1.0, vUv.y));
+                            
+                            gl_FragColor = vec4(color, 1.0);
+                        }
+                    `}
+                    side={2}
+                    depthWrite={false}
+                />
+            </mesh>
+        </mesh>
+    );
 }
 
 function MovingStarsBackground() {
@@ -274,6 +310,8 @@ export function SceneContent() {
         <>
             {/* 移動する星空背景 */}
             {config.backgroundType === "stars" && <MovingStarsBackground />}
+            {/* 夜明け背景 */}
+            {config.backgroundType === "dawn" && <DawnBackground />}
 
             <PerspectiveCamera makeDefault position={[-20, 20, 30]} />
             <OrbitControls />

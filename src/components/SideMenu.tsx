@@ -195,7 +195,7 @@ export function SideMenu() {
                                             ? "bg-blue-600 text-white"
                                             : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                                     }`}>
-                                    ✨ 星空
+                                    ❄ 雪
                                 </button>
                                 <button
                                     onClick={() =>
@@ -206,7 +206,7 @@ export function SideMenu() {
                                             ? "bg-blue-600 text-white"
                                             : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                                     }`}>
-                                    🎨 単色
+                                     単色
                                 </button>
                             </div>
                             <p className='text-gray-400 text-xs mt-2'>

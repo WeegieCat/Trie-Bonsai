@@ -8,7 +8,7 @@ interface BonsaiConfig {
     nodeSize: number;
     lightIntensity: number;
     backgroundColor: string;
-    backgroundType: "stars" | "solid";
+    backgroundType: "stars" | "solid" | "dawn";
     nodeGradientPreset:
         | "dustyGrass"
         | "newLife"
