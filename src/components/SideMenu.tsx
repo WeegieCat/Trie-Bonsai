@@ -59,7 +59,13 @@ export function SideMenu() {
             )}
 
             {/* 左側説明パネル */}
-            {isSideMenuOpen && <HelpModal topic={helpTopic} isVisible={isHelpVisible} onClose={closeHelp} />}
+            {isSideMenuOpen && (
+                <HelpModal
+                    topic={helpTopic}
+                    isVisible={isHelpVisible}
+                    onClose={closeHelp}
+                />
+            )}
 
             {/* サイドメニュー */}
             <div

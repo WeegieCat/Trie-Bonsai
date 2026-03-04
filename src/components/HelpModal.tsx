@@ -10,22 +10,46 @@ interface HelpModalProps {
 
 const GRADIENT_SHOWCASE = [
     {
-        name: "Lemon Gate",
-        colors: "linear-gradient(90deg, #8ee3a1 0%, #8ec5fc 50%, #ffde7a 100%)",
+        name: "Dusty Grass",
+        colors: "linear-gradient(90deg, #d4fc79 0%, #96e6a1 100%)",
         description:
-            "爽やかなミントグリーンから柔らかいブルーを経て、明るいレモンイエローへ変化します。",
+            "黄緑色から優しいグリーンへ移行する、自然で落ち着いた配色。草原のような穏やかさを感じさせます。",
     },
     {
         name: "New Life",
-        colors: "linear-gradient(90deg, #2af598 0%, #009efd 100%)",
+        colors: "linear-gradient(90deg, #43e97b 0%, #38f9d7 100%)",
         description:
-            "生命感のあるグリーンからクリアなブルーへ移る、清涼感の高い配色です。",
+            "生命感のあるグリーンからシアン色へ移る、清涼感の高い配色。新しい始まりを表現します。",
+    },
+    {
+        name: "Blessing",
+        colors: "linear-gradient(90deg, #fddb92 0%, #d1fdff 100%)",
+        description:
+            "温かいオレンジから冷たいシアンブルーへ、昼と夜の光を表現する穏やかなグラデーション。",
+    },
+    {
+        name: "Lemon Gate",
+        colors: "linear-gradient(90deg, #96fbc4 0%, #f9f586 100%)",
+        description:
+            "爽やかなミント緑から明るいレモンイエローへ変化する、活発で元気な印象の配色です。",
+    },
+    {
+        name: "Old Hat",
+        colors: "linear-gradient(90deg, #e4afcb 0%, #b8cbb8 25%, #e2c58b 50%, #c2ce9c 75%, #7edbdc 100%)",
+        description:
+            "くすみ系の5色グラデーション。懐かしく上品な雰囲気で、複雑な階層構造を繊細に表現します。",
+    },
+    {
+        name: "Wide Matrix",
+        colors: "linear-gradient(90deg, #fcc5e4 0%, #fda34b 16.67%, #ff7882 33.33%, #c8699e 50%, #7046aa 66.67%, #0c1db8 83.33%, #020f75 100%)",
+        description:
+            "ピンクから深紫へ至る7色の大胆なグラデーション。色の多様性により深い階層をはっきりと区別できます。",
     },
     {
         name: "Burning Spring",
-        colors: "linear-gradient(90deg, #ff6a88 0%, #ff99ac 45%, #f9d423 100%)",
+        colors: "linear-gradient(90deg, #4fb576 0%, #44c489 14.29%, #28a9ae 28.57%, #28a2b7 42.86%, #4c7788 57.14%, #6c4f63 71.43%, #432c39 100%)",
         description:
-            "暖色系で構成された力強いグラデーションで、ノードの深さを印象的に表現します。",
+            "緑から暗い藍色へ移行する7色グラデーション。季節の変化を表現し、根から葉への成長過程が直感的に伝わります。",
     },
 ];
 
