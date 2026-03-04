@@ -25,11 +25,16 @@ export function UIOverlay() {
         setCurrentInput(e.target.value);
     };
 
+    const handleToggleOverlay = () => {
+        setIsOverlayHidden((prev) => !prev);
+    };
+
     const handleGenerate = () => {
         const trimmedInput = currentInput.trim();
         if (trimmedInput) {
             setInputValue(trimmedInput);
             generateBonsai(trimmedInput);
+            handleToggleOverlay();
         }
     };
 
@@ -143,7 +148,7 @@ export function UIOverlay() {
                 {/* 右下ボタングループ */}
                 <div className='absolute bottom-24 right-8 pointer-events-auto flex items-center gap-3'>
                     <button
-                        onClick={() => setIsOverlayHidden((prev) => !prev)}
+                        onClick={handleToggleOverlay}
                         className='px-4 h-14 bg-gray-800 bg-opacity-80 backdrop-blur hover:bg-gray-700 text-white rounded-full shadow-lg transition flex items-center justify-center font-bold'
                         title={
                             isOverlayHidden
