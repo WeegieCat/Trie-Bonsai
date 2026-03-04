@@ -11,10 +11,32 @@ interface PostModalProps {
 export function PostModal({ isOpen, onClose, onSubmit }: PostModalProps) {
     const [bonsaiName, setBonsaiName] = useState("");
     const [isAnimating, setIsAnimating] = useState(false);
+    const [previewImage, setPreviewImage] = useState("");
 
     useEffect(() => {
         if (isOpen) {
             setIsAnimating(true);
+
+            let isCanceled = false;
+            const captureScreenshot = async () => {
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+                const canvas = document.querySelector("canvas");
+
+                if (!canvas || isCanceled) {
+                    if (!isCanceled) {
+                        setPreviewImage("");
+                    }
+                    return;
+                }
+
+                setPreviewImage(canvas.toDataURL("image/png"));
+            };
+
+            captureScreenshot();
+
+            return () => {
+                isCanceled = true;
+            };
         }
     }, [isOpen]);
 
@@ -28,6 +50,7 @@ export function PostModal({ isOpen, onClose, onSubmit }: PostModalProps) {
         setIsAnimating(false);
         setTimeout(() => {
             setBonsaiName("");
+            setPreviewImage("");
             onClose();
         }, 300); // アニメーション時間と同期
     };
@@ -51,11 +74,17 @@ export function PostModal({ isOpen, onClose, onSubmit }: PostModalProps) {
                     投稿内容の確認
                 </h3>
 
-                <img
-                    src='https://picsum.photos/600/600?bonsai-mock'
-                    alt='作成した盆栽のモック画像'
-                    className='w-full h-56 object-cover rounded-lg mb-4'
-                />
+                {previewImage ? (
+                    <img
+                        src={previewImage}
+                        alt='作成した盆栽のプレビュー画像'
+                        className='w-full h-56 object-cover rounded-lg mb-4'
+                    />
+                ) : (
+                    <div className='w-full h-56 rounded-lg mb-4 bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-400 text-sm'>
+                        プレビューを取得できませんでした
+                    </div>
+                )}
 
                 <label className='block text-sm text-gray-300 mb-2'>
                     盆栽の名前
