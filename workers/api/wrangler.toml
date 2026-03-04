@@ -16,3 +16,31 @@ preview_database_id = "00000000-0000-0000-0000-000000000000"
 binding = "BONSAI_BUCKET"
 bucket_name = "triebonsai-images"
 preview_bucket_name = "triebonsai-images-preview"
+
+# Production environment
+[env.production]
+name = "triebonsai-edge-api-prod"
+vars = { CORS_ORIGIN = "https://triebonsai.pages.dev", R2_PUBLIC_BASE_URL = "https://r2.triebonsai.pages.dev" }
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "triebonsai-prod"
+database_id = "YOUR_PROD_DB_ID"  # Set via wrangler secret
+
+[[env.production.r2_buckets]]
+binding = "BONSAI_BUCKET"
+bucket_name = "triebonsai-images-prod"
+
+# Staging environment
+[env.staging]
+name = "triebonsai-edge-api-staging"
+vars = { CORS_ORIGIN = "https://staging.triebonsai.pages.dev", R2_PUBLIC_BASE_URL = "https://r2-staging.triebonsai.pages.dev" }
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "triebonsai-staging"
+database_id = "YOUR_STAGING_DB_ID"
+
+[[env.staging.r2_buckets]]
+binding = "BONSAI_BUCKET"
+bucket_name = "triebonsai-images-staging"

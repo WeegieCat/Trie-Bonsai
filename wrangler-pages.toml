@@ -1,0 +1,24 @@
+# Cloudflare Pages Configuration
+
+[env.production]
+  vars = { ENVIRONMENT = "production" }
+
+[env.staging]
+  vars = { ENVIRONMENT = "staging" }
+
+[env.development]
+  vars = { ENVIRONMENT = "development" }
+
+# Build settings
+[build]
+  command = "npm run build"
+  caches_on_success = "default"
+
+# Functions configuration (for API routes if needed)
+[functions]
+  directory = "functions"
+
+# Routing
+[[routes]]
+  pattern = "/api/*"
+  zone_id = ""  # Set via environment variable

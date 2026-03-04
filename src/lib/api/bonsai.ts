@@ -4,7 +4,7 @@
  */
 
 const WORKER_API_BASE_URL =
-    process.env.NEXT_PUBLIC_WORKER_API_URL ?? "http://127.0.0.1:8787";
+    process.env.NEXT_PUBLIC_WORKER_API_URL ?? "http://localhost:8787";
 
 export interface BonsaiSubmitPayload {
     title: string;
