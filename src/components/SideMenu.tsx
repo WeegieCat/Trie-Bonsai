@@ -206,7 +206,7 @@ export function SideMenu() {
                                             ? "bg-blue-600 text-white"
                                             : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                                     }`}>
-                                    🌅 夜明け
+                                    🌅 夜明
                                 </button>
                                 <button
                                     onClick={() =>
@@ -234,7 +234,7 @@ export function SideMenu() {
                     <button
                         onClick={() =>
                             setConfig({
-                                backgroundType: "stars",
+                                backgroundType: "solid",
                                 nodeGradientPreset: "dustyGrass",
                             })
                         }

@@ -70,7 +70,7 @@ export const useStore = create<AppState>((set) => ({
         nodeSize: 1,
         lightIntensity: 1,
         backgroundColor: "#1a1a1a",
-        backgroundType: "stars",
+        backgroundType: "solid",
         nodeGradientPreset: "dustyGrass",
     },
     setConfig: (newConfig) =>
