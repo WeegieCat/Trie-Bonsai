@@ -222,28 +222,63 @@ export function SideMenu() {
                             />
                         </div>
 
-                        {/* 背景色 */}
+                        {/* 背景タイプ */}
                         <div>
                             <label className='block text-gray-300 text-sm font-medium mb-2'>
-                                背景色
+                                背景タイプ
                             </label>
-                            <input
-                                type='color'
-                                value={config.backgroundColor}
-                                onChange={(e) =>
-                                    setConfig({
-                                        backgroundColor: e.target.value,
-                                    })
-                                }
-                                className='w-full h-10 rounded cursor-pointer'
-                            />
-                            <p className='text-gray-400 text-xs mt-1'>
-                                {config.backgroundColor}
-                            </p>
-                            <p className='text-gray-400 text-xs mt-1'>
-                                🧿 3D空間の背景色を変更します
+                            <div className='flex gap-2'>
+                                <button
+                                    onClick={() =>
+                                        setConfig({ backgroundType: "stars" })
+                                    }
+                                    className={`flex-1 px-4 py-2 rounded-lg font-medium transition ${
+                                        config.backgroundType === "stars"
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                                    }`}>
+                                    ✨ 星空
+                                </button>
+                                <button
+                                    onClick={() =>
+                                        setConfig({ backgroundType: "solid" })
+                                    }
+                                    className={`flex-1 px-4 py-2 rounded-lg font-medium transition ${
+                                        config.backgroundType === "solid"
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                                    }`}>
+                                    🎨 単色
+                                </button>
+                            </div>
+                            <p className='text-gray-400 text-xs mt-2'>
+                                {config.backgroundType === "stars"
+                                    ? "⭐ 移動する星空背景"
+                                    : "🧿 単色の背景"}
                             </p>
                         </div>
+
+                        {/* 背景色 */}
+                        {config.backgroundType === "solid" && (
+                            <div>
+                                <label className='block text-gray-300 text-sm font-medium mb-2'>
+                                    背景色
+                                </label>
+                                <input
+                                    type='color'
+                                    value={config.backgroundColor}
+                                    onChange={(e) =>
+                                        setConfig({
+                                            backgroundColor: e.target.value,
+                                        })
+                                    }
+                                    className='w-full h-10 rounded cursor-pointer'
+                                />
+                                <p className='text-gray-400 text-xs mt-1'>
+                                    {config.backgroundColor}
+                                </p>
+                            </div>
+                        )}
                     </div>
 
                     {/* リセットボタン */}
@@ -253,6 +288,7 @@ export function SideMenu() {
                                 nodeSize: 1,
                                 lightIntensity: 1,
                                 backgroundColor: "#1a1a1a",
+                                backgroundType: "stars",
                                 nodeGradientPreset: "dustyGrass",
                             })
                         }

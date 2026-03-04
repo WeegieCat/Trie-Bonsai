@@ -8,6 +8,7 @@ interface BonsaiConfig {
     nodeSize: number;
     lightIntensity: number;
     backgroundColor: string;
+    backgroundType: "stars" | "solid";
     nodeGradientPreset:
         | "dustyGrass"
         | "newLife"
@@ -69,6 +70,7 @@ export const useStore = create<AppState>((set) => ({
         nodeSize: 1,
         lightIntensity: 1,
         backgroundColor: "#1a1a1a",
+        backgroundType: "stars",
         nodeGradientPreset: "dustyGrass",
     },
     setConfig: (newConfig) =>

@@ -273,7 +273,7 @@ export function SceneContent() {
     return (
         <>
             {/* 移動する星空背景 */}
-            <MovingStarsBackground />
+            {config.backgroundType === "stars" && <MovingStarsBackground />}
 
             <PerspectiveCamera makeDefault position={[-20, 20, 30]} />
             <OrbitControls />
