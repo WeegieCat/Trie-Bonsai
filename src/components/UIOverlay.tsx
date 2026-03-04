@@ -14,6 +14,7 @@ export function UIOverlay() {
     const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
     const [isDownloadModalAnimating, setIsDownloadModalAnimating] =
         useState(false);
+    const [downloadPreviewImage, setDownloadPreviewImage] = useState("");
     const [isOverlayHidden, setIsOverlayHidden] = useState(false);
     const setInputValue = useStore((state) => state.setInputValue);
     const generateBonsai = useStore((state) => state.generateBonsai);
@@ -45,10 +46,30 @@ export function UIOverlay() {
         });
     };
 
-    const handleDownloadImage = () => {
+    const resetCameraToDefault = useStore(
+        (state) => state.resetCameraToDefault,
+    );
+
+    const captureCanvasScreenshot = () => {
+        const canvas = document.querySelector("canvas");
+        if (!canvas) {
+            return "";
+        }
+
+        return canvas.toDataURL("image/png");
+    };
+
+    const handleDownloadImage = async () => {
         const canvas = document.querySelector("canvas");
         if (!canvas) {
             return;
+        }
+
+        // カメラをデフォルト位置にリセット
+        if (resetCameraToDefault) {
+            resetCameraToDefault();
+            // レンダリングが完了するまで少し待機
+            await new Promise((resolve) => setTimeout(resolve, 300));
         }
 
         const link = document.createElement("a");
@@ -58,6 +79,7 @@ export function UIOverlay() {
     };
 
     const handleOpenDownloadModal = () => {
+        setDownloadPreviewImage(captureCanvasScreenshot());
         setIsDownloadModalAnimating(true);
         setIsDownloadModalOpen(true);
     };
@@ -192,11 +214,17 @@ export function UIOverlay() {
                             画像を保存しますか？
                         </h3>
 
-                        <img
-                            src='https://picsum.photos/600/600?bonsai-mock'
-                            alt='作成した盆栽のモック画像'
-                            className='w-full h-56 object-cover rounded-lg mb-4'
-                        />
+                        {downloadPreviewImage ? (
+                            <img
+                                src={downloadPreviewImage}
+                                alt='作成した盆栽のプレビュー画像'
+                                className='w-full h-56 object-cover rounded-lg mb-4'
+                            />
+                        ) : (
+                            <div className='w-full h-56 rounded-lg mb-4 bg-gray-800 border border-gray-700 flex items-center justify-center text-gray-400 text-sm'>
+                                プレビューを取得できませんでした
+                            </div>
+                        )}
 
                         <p className='text-gray-300 text-sm text-center mb-6'>
                             現在表示中の盆栽をPNG画像としてダウンロードします。

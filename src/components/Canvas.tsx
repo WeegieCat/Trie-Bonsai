@@ -11,6 +11,7 @@ export function BonsaiCanvas() {
         <div className='w-full h-full'>
             <Canvas
                 camera={{ position: [-20, 20, 30], fov: 50 }}
+                gl={{ preserveDrawingBuffer: true }}
                 style={{
                     background: config.backgroundColor,
                     width: "100%",

@@ -1,9 +1,10 @@
 "use client";
 
+import { useRef, useEffect, useMemo, useState } from "react";
 import { OrbitControls, PerspectiveCamera, Line } from "@react-three/drei";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { useFrame } from "@react-three/fiber";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
-import { useEffect, useMemo, useRef, useState } from "react";
 import { BufferGeometry, Color, Float32BufferAttribute, Points } from "three";
 import { useStore } from "@/store/store";
 import type { BonsaiData, GraphEdge, GraphNode } from "@/types/bonsai";
@@ -124,7 +125,7 @@ function getEdgeKey(edge: GraphEdge, index: number): string {
 
 function DawnBackground() {
     return (
-        <mesh position={[0, 0, 0]}>
+        <mesh position={[0, 0, 0]} renderOrder={-1}>
             <sphereGeometry args={[200, 64, 64]} />
             <shaderMaterial
                 vertexShader={`
@@ -172,7 +173,6 @@ function DawnBackground() {
                 `}
                 side={2}
                 depthWrite={false}
-                depthTest={false}
             />
         </mesh>
     );
@@ -266,6 +266,10 @@ function MovingStarsBackground() {
 export function SceneContent() {
     const config = useStore((state) => state.config);
     const bonsaiData = useStore((state) => state.bonsaiData);
+    const setResetCameraToDefault = useStore(
+        (state) => state.setResetCameraToDefault,
+    );
+    const controlsRef = useRef<OrbitControlsImpl>(null);
     const [animationTime, setAnimationTime] = useState(0);
     const animationStartTimeRef = useRef<number | null>(null);
 
@@ -301,6 +305,16 @@ export function SceneContent() {
         setAnimationTime(0);
     }, [bonsaiData]);
 
+    useEffect(() => {
+        // カメラリセット関数をStoreに登録
+        const resetCamera = () => {
+            if (controlsRef.current) {
+                controlsRef.current.reset();
+            }
+        };
+        setResetCameraToDefault(resetCamera);
+    }, [setResetCameraToDefault]);
+
     useFrame(() => {
         if (!bonsaiData || revealNodes.length === 0 || animationEndTime <= 0) {
             return;
@@ -329,7 +343,7 @@ export function SceneContent() {
             {config.backgroundType === "dawn" && <DawnBackground />}
 
             <PerspectiveCamera makeDefault position={[-20, 20, 30]} />
-            <OrbitControls />
+            <OrbitControls ref={controlsRef} />
 
             {/* ライティング */}
             <ambientLight intensity={config.lightIntensity * 0.5} />

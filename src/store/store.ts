@@ -36,6 +36,8 @@ interface AppState {
     setConfig: (config: Partial<BonsaiConfig>) => void;
     generatedBonsais: string[]; // 生成された盆栽のID
     addGeneratedBonsai: (id: string) => void;
+    resetCameraToDefault: (() => void) | null;
+    setResetCameraToDefault: (callback: () => void) => void;
 }
 
 export const useStore = create<AppState>((set) => ({
@@ -82,4 +84,7 @@ export const useStore = create<AppState>((set) => ({
         set((state) => ({
             generatedBonsais: [id, ...state.generatedBonsais],
         })),
+    resetCameraToDefault: null,
+    setResetCameraToDefault: (callback) =>
+        set({ resetCameraToDefault: callback }),
 }));
