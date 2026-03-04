@@ -9,7 +9,7 @@ export function Header() {
                 <Link
                     href='/'
                     className='flex items-center gap-2 hover:opacity-80 transition'>
-                    <span className='text-2xl font-bold'>🌿 String Bonsai</span>
+                    <span className='text-2xl font-bold'>🌿 Trie Bonsai</span>
                 </Link>
 
                 <nav className='flex items-center gap-6'>

@@ -40,7 +40,7 @@ export function UIOverlay() {
                 <div className='max-w-2xl mx-auto'>
                     {/* タイトル */}
                     <h1 className='text-4xl font-bold text-white mb-6 text-center'>
-                        🌿 String Bonsai
+                        🌿 Trie Bonsai
                     </h1>
 
                     {/* 入力フォーム */}
