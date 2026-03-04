@@ -7,6 +7,7 @@ import type {
 } from "@/types/bonsai";
 import { Trie } from "@/lib/trees/trie/Trie";
 import { PatriciaTrie } from "@/lib/trees/patricia/PatriciaTrie";
+import { SuffixTree } from "@/lib/trees/suffix/SuffixTree";
 
 type GraphInput = {
     nodes: GraphNode[];
@@ -42,6 +43,19 @@ export function buildPatriciaFromInput(input: string): PatriciaTrie {
     return patricia;
 }
 
+export function buildSuffixTreeFromInput(input: string): SuffixTree {
+    const suffix = new SuffixTree();
+    const words = sanitizeInput(input);
+
+    words.forEach((word) => {
+        // サフィックス木の場合：単語をそのまま挿入
+        // サフィックス木自体がすべてのサフィックスを内部で管理
+        suffix.insert(word);
+    });
+
+    return suffix;
+}
+
 /**
  * 指定された木タイプで、入力文字列から木を構築する
  * @param type 木のタイプ ('trie' | 'patricia' | 'suffix')
@@ -58,8 +72,7 @@ export function buildTreeFromInput(
         case "patricia":
             return buildPatriciaFromInput(input);
         case "suffix":
-            // サフィックス木はPhase 2で実装予定
-            throw new Error("サフィックス木はまだ実装されていません");
+            return buildSuffixTreeFromInput(input);
         default:
             const _exhaustive: never = type;
             return _exhaustive;

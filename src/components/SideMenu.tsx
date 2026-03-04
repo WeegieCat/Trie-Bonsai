@@ -64,8 +64,8 @@ export function SideMenu() {
                                 <option value='patricia'>
                                     パトリシア木 (Patricia/Radix)
                                 </option>
-                                <option value='suffix' disabled>
-                                    サフィックス木 (Suffix) - 準備中
+                                <option value='suffix'>
+                                    サフィックス木 (Suffix Tree)
                                 </option>
                             </select>
                             <p className='text-gray-400 text-xs mt-2'>
