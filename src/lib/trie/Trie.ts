@@ -116,6 +116,79 @@ export class Trie {
         return { nodes, edges };
     }
 
+    toASCII(): string {
+        const lines: string[] = ["[Root]"];
+        const visited = new Set<TrieNode>();
+
+        const dfs = (node: TrieNode, prefix: string, isLast: boolean) => {
+            visited.add(node);
+
+            const children = Array.from(node.children.values());
+
+            children.forEach((child, index) => {
+                const isLastChild = index === children.length - 1;
+                const connector = isLastChild ? "└─" : "├─";
+                const nextPrefix = isLastChild ? "   " : "|  ";
+
+                const endMarker = child.isEndOfWord
+                    ? ` [End: ${this.extractWord(child)}]`
+                    : "";
+                lines.push(`${prefix}${connector} "${child.char}"${endMarker}`);
+
+                if (!visited.has(child)) {
+                    dfs(child, prefix + nextPrefix, isLastChild);
+                }
+            });
+        };
+
+        dfs(this.root, "", true);
+        return lines.join("\n");
+    }
+
+    private extractWord(node: TrieNode): string {
+        const chars: string[] = [];
+        let current: TrieNode | null = node;
+
+        while (current && current.char !== null) {
+            chars.unshift(current.char);
+            // 親を見つけるためにルートから探索する必要があるので、
+            // ここは node.char を使って文字列を表現
+            break; // シンプルな実装: 現在のノード文字のみ
+        }
+
+        // より正確な実装: ノードチェーンを辿る
+        // ただし、TrieNode に親への参照がないため、別途実装が必要
+        // ここは簡易版として、子から親への逆走査ができないため、名前付けを工夫
+        return this.getWordFromNode(node);
+    }
+
+    private getWordFromNode(targetNode: TrieNode): string {
+        const word: string[] = [];
+
+        const findPath = (node: TrieNode): boolean => {
+            if (node === targetNode) {
+                if (node.char !== null) {
+                    word.push(node.char);
+                }
+                return true;
+            }
+
+            for (const [char, child] of node.children) {
+                if (findPath(child)) {
+                    if (node.char !== null) {
+                        word.unshift(node.char);
+                    }
+                    return true;
+                }
+            }
+
+            return false;
+        };
+
+        findPath(this.root);
+        return word.join("");
+    }
+
     private createNodeId(): string {
         const id = `node-${this.nextNodeId}`;
         this.nextNodeId += 1;

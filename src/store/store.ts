@@ -15,6 +15,8 @@ interface AppState {
     setInputValue: (value: string) => void;
     bonsaiData: BonsaiData | null;
     setBonsaiData: (data: BonsaiData) => void;
+    trieText: string | null;
+    setTrieText: (text: string) => void;
     generateBonsai: (input: string) => void;
     isSideMenuOpen: boolean;
     setIsSideMenuOpen: (open: boolean) => void;
@@ -29,12 +31,15 @@ export const useStore = create<AppState>((set) => ({
     setInputValue: (value) => set({ inputValue: value }),
     bonsaiData: null,
     setBonsaiData: (data) => set({ bonsaiData: data }),
+    trieText: null,
+    setTrieText: (text) => set({ trieText: text }),
     generateBonsai: (input) => {
         const trie = buildTrieFromInput(input);
         const graph = trie.toGraph();
         const data = graphToNodes(graph);
+        const text = trie.toASCII();
 
-        set({ bonsaiData: data });
+        set({ bonsaiData: data, trieText: text });
     },
     isSideMenuOpen: false,
     setIsSideMenuOpen: (open) => set({ isSideMenuOpen: open }),

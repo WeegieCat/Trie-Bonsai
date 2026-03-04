@@ -8,9 +8,11 @@ export function UIOverlay() {
     const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
     const [isDownloadModalAnimating, setIsDownloadModalAnimating] =
         useState(false);
+    const [isDebugOpen, setIsDebugOpen] = useState(false);
     const inputValue = useStore((state) => state.inputValue);
     const setInputValue = useStore((state) => state.setInputValue);
     const generateBonsai = useStore((state) => state.generateBonsai);
+    const trieText = useStore((state) => state.trieText);
     const setIsSideMenuOpen = useStore((state) => state.setIsSideMenuOpen);
 
     useEffect(() => {
@@ -149,6 +151,24 @@ export function UIOverlay() {
                         </svg>
                     </button>
                 </div>
+
+                {/* デバッグパネル（左下） */}
+                {trieText && (
+                    <div className='absolute bottom-8 left-8 pointer-events-auto'>
+                        <button
+                            onClick={() => setIsDebugOpen(!isDebugOpen)}
+                            className='mb-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-bold rounded-lg transition text-sm'>
+                            🐛 デバッグ {isDebugOpen ? "▼" : "▶"}
+                        </button>
+                        {isDebugOpen && (
+                            <div className='bg-gray-900 bg-opacity-95 backdrop-blur rounded-lg p-4 max-w-sm max-h-96 overflow-y-auto border border-yellow-500 font-mono text-xs text-green-400'>
+                                <pre className='whitespace-pre-wrap break-words'>
+                                    {trieText}
+                                </pre>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             {isDownloadModalOpen && (
