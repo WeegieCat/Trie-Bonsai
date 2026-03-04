@@ -124,37 +124,56 @@ function getEdgeKey(edge: GraphEdge, index: number): string {
 
 function DawnBackground() {
     return (
-        <mesh position={[0, 0, -50]} rotation={[0, 0, 0]}>
-            <sphereGeometry args={[100, 64, 64]} />
-            <meshBasicMaterial color='#1a1a2e' side={1} depthWrite={false} />
-            <mesh position={[0, 0, 0]}>
-                <planeGeometry args={[200, 200]} />
-                <shaderMaterial
-                    vertexShader={`
-                        varying vec2 vUv;
-                        void main() {
-                            vUv = uv;
-                            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        <mesh position={[0, 0, 0]}>
+            <sphereGeometry args={[200, 64, 64]} />
+            <shaderMaterial
+                vertexShader={`
+                    varying vec3 vPosition;
+                    void main() {
+                        vPosition = position;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `}
+                fragmentShader={`
+                    varying vec3 vPosition;
+                    void main() {
+                        // 球体の縦方向の位置で色を変える（Y座標）
+                        float normalizedY = (vPosition.y + 200.0) / 400.0;
+                        
+                        // 夜明けのグラデーション
+                        vec3 colorBottom = vec3(0.1, 0.15, 0.35);    // 深い青紫（下部）
+                        vec3 colorHorizon = vec3(1.0, 0.6, 0.4);     // オレンジ（地平線）
+                        vec3 colorMid = vec3(0.8, 0.5, 0.5);         // ピンクがかった色（中間）
+                        vec3 colorTop = vec3(0.2, 0.3, 0.5);         // 薄い青紫（上部）
+                        
+                        vec3 color;
+                        if (normalizedY < 0.3) {
+                            // 下部：深い青紫
+                            color = colorBottom;
+                        } else if (normalizedY < 0.45) {
+                            // 地平線付近：青紫からオレンジへ
+                            float t = (normalizedY - 0.3) / 0.15;
+                            color = mix(colorBottom, colorHorizon, smoothstep(0.0, 1.0, t));
+                        } else if (normalizedY < 0.55) {
+                            // 地平線：オレンジ
+                            float t = (normalizedY - 0.45) / 0.1;
+                            color = mix(colorHorizon, colorMid, smoothstep(0.0, 1.0, t));
+                        } else if (normalizedY < 0.7) {
+                            // 中間：ピンクから薄い青紫へ
+                            float t = (normalizedY - 0.55) / 0.15;
+                            color = mix(colorMid, colorTop, smoothstep(0.0, 1.0, t));
+                        } else {
+                            // 上部：薄い青紫
+                            color = colorTop;
                         }
-                    `}
-                    fragmentShader={`
-                        varying vec2 vUv;
-                        void main() {
-                            vec3 colorTop = vec3(0.05, 0.05, 0.15);
-                            vec3 colorHorizon = vec3(1.0, 0.5, 0.3);
-                            vec3 colorBottom = vec3(0.1, 0.2, 0.4);
-                            
-                            float mixValue = smoothstep(0.3, 0.7, vUv.y);
-                            vec3 color = mix(colorBottom, colorHorizon, smoothstep(0.0, 0.5, vUv.y));
-                            color = mix(color, colorTop, smoothstep(0.5, 1.0, vUv.y));
-                            
-                            gl_FragColor = vec4(color, 1.0);
-                        }
-                    `}
-                    side={2}
-                    depthWrite={false}
-                />
-            </mesh>
+                        
+                        gl_FragColor = vec4(color, 1.0);
+                    }
+                `}
+                side={2}
+                depthWrite={false}
+                depthTest={false}
+            />
         </mesh>
     );
 }
