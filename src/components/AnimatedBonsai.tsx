@@ -110,7 +110,10 @@ export function AnimatedBonsai() {
 
     const progress =
         loopDurationSec > 0
-            ? Math.round((Math.min(elapsedSec, animationEndSec) / animationEndSec) * 100)
+            ? Math.round(
+                  (Math.min(elapsedSec, animationEndSec) / animationEndSec) *
+                      100,
+              )
             : 0;
 
     const visibleEdges = useMemo(() => {

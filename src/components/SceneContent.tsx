@@ -4,7 +4,12 @@ import { OrbitControls, PerspectiveCamera, Line } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Color } from "three";
+import {
+    BufferGeometry,
+    Color,
+    Float32BufferAttribute,
+    Points,
+} from "three";
 import { useStore } from "@/store/store";
 import type { BonsaiData, GraphEdge, GraphNode } from "@/types/bonsai";
 
@@ -122,6 +127,91 @@ function getEdgeKey(edge: GraphEdge, index: number): string {
     return `${edge.from}-${edge.to}-${index}`;
 }
 
+function MovingStarsBackground() {
+    const pointsRef = useRef<Points>(null);
+    const velocitiesRef = useRef<Float32Array | null>(null);
+
+    const particleCount = 300;
+    const range = 80;
+
+    const geometry = useMemo(() => {
+        const geo = new BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const velocities = new Float32Array(particleCount * 3);
+
+        for (let i = 0; i < particleCount; i++) {
+            const i3 = i * 3;
+
+            // 初期位置をランダムに配置
+            positions[i3] = (Math.random() - 0.5) * range;
+            positions[i3 + 1] = (Math.random() - 0.5) * range;
+            positions[i3 + 2] = (Math.random() - 0.5) * range * 0.5;
+
+            // 各点は平行（X方向）または垂直（Y方向）のどちらかに移動
+            const isHorizontal = Math.random() > 0.5;
+            const speed = 0.5 + Math.random() * 1.5;
+
+            if (isHorizontal) {
+                velocities[i3] = (Math.random() > 0.5 ? 1 : -1) * speed;
+                velocities[i3 + 1] = 0;
+            } else {
+                velocities[i3] = 0;
+                velocities[i3 + 1] = (Math.random() > 0.5 ? 1 : -1) * speed;
+            }
+            velocities[i3 + 2] = 0;
+        }
+
+        geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
+        velocitiesRef.current = velocities;
+
+        return geo;
+    }, []);
+
+    useFrame((state, delta) => {
+        if (!pointsRef.current || !velocitiesRef.current) {
+            return;
+        }
+
+        const positions = pointsRef.current.geometry.attributes.position
+            .array as Float32Array;
+        const velocities = velocitiesRef.current;
+
+        for (let i = 0; i < particleCount; i++) {
+            const i3 = i * 3;
+
+            positions[i3] += velocities[i3] * delta;
+            positions[i3 + 1] += velocities[i3 + 1] * delta;
+
+            // 範囲外に出たら反対側にループ
+            if (positions[i3] > range / 2) {
+                positions[i3] = -range / 2;
+            } else if (positions[i3] < -range / 2) {
+                positions[i3] = range / 2;
+            }
+
+            if (positions[i3 + 1] > range / 2) {
+                positions[i3 + 1] = -range / 2;
+            } else if (positions[i3 + 1] < -range / 2) {
+                positions[i3 + 1] = range / 2;
+            }
+        }
+
+        pointsRef.current.geometry.attributes.position.needsUpdate = true;
+    });
+
+    return (
+        <points ref={pointsRef} geometry={geometry}>
+            <pointsMaterial
+                color='white'
+                size={0.15}
+                sizeAttenuation={true}
+                transparent={true}
+                opacity={0.6}
+            />
+        </points>
+    );
+}
+
 export function SceneContent() {
     const config = useStore((state) => state.config);
     const bonsaiData = useStore((state) => state.bonsaiData);
@@ -182,6 +272,9 @@ export function SceneContent() {
 
     return (
         <>
+            {/* 移動する星空背景 */}
+            <MovingStarsBackground />
+
             <PerspectiveCamera makeDefault position={[-20, 20, 30]} />
             <OrbitControls />
 
@@ -202,7 +295,8 @@ export function SceneContent() {
                 <>
                     {/* エッジ（線）をレンダリング */}
                     {bonsaiData.edges.map((edge, idx) => {
-                        const edgeStartTime = nodeStartTimeMap.get(edge.to) ?? 0;
+                        const edgeStartTime =
+                            nodeStartTimeMap.get(edge.to) ?? 0;
                         if (animationTime < edgeStartTime) {
                             return null;
                         }
@@ -233,12 +327,14 @@ export function SceneContent() {
 
                     {/* ノード（球体）をレンダリング */}
                     {revealNodes.map((node) => {
-                        const nodeStartTime = nodeStartTimeMap.get(node.id) ?? 0;
+                        const nodeStartTime =
+                            nodeStartTimeMap.get(node.id) ?? 0;
                         const progress = Math.min(
                             1,
                             Math.max(
                                 0,
-                                (animationTime - nodeStartTime) / growDurationSec,
+                                (animationTime - nodeStartTime) /
+                                    growDurationSec,
                             ),
                         );
 
