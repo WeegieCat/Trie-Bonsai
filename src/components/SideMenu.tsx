@@ -1,7 +1,11 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { useStore } from "@/store/store";
 import { TREE_TYPE_LABELS } from "@/lib/trees/common/types";
+import { HelpModal } from "./HelpModal";
+
+type HelpTopic = "treeType" | "gradient" | null;
 
 export function SideMenu() {
     const isSideMenuOpen = useStore((state) => state.isSideMenuOpen);
@@ -12,6 +16,34 @@ export function SideMenu() {
     const setConfig = useStore((state) => state.setConfig);
     const generateBonsai = useStore((state) => state.generateBonsai);
     const inputValue = useStore((state) => state.inputValue);
+    const [helpTopic, setHelpTopic] = useState<HelpTopic>(null);
+    const [isHelpVisible, setIsHelpVisible] = useState(false);
+    const hideHelpTimerRef = useRef<number | null>(null);
+
+    const openHelp = (topic: Exclude<HelpTopic, null>) => {
+        if (hideHelpTimerRef.current) {
+            window.clearTimeout(hideHelpTimerRef.current);
+            hideHelpTimerRef.current = null;
+        }
+        setHelpTopic(topic);
+        requestAnimationFrame(() => setIsHelpVisible(true));
+    };
+
+    const closeHelp = () => {
+        setIsHelpVisible(false);
+        hideHelpTimerRef.current = window.setTimeout(() => {
+            setHelpTopic(null);
+            hideHelpTimerRef.current = null;
+        }, 240);
+    };
+
+    useEffect(() => {
+        return () => {
+            if (hideHelpTimerRef.current) {
+                window.clearTimeout(hideHelpTimerRef.current);
+            }
+        };
+    }, []);
 
     return (
         <>
@@ -19,9 +51,15 @@ export function SideMenu() {
             {isSideMenuOpen && (
                 <div
                     className='fixed inset-0 bg-black bg-opacity-20 z-30'
-                    onClick={() => setIsSideMenuOpen(false)}
+                    onClick={() => {
+                        setIsSideMenuOpen(false);
+                        closeHelp();
+                    }}
                 />
             )}
+
+            {/* 左側説明パネル */}
+            {isSideMenuOpen && <HelpModal topic={helpTopic} isVisible={isHelpVisible} onClose={closeHelp} />}
 
             {/* サイドメニュー */}
             <div
@@ -33,7 +71,10 @@ export function SideMenu() {
                     <div className='flex justify-between items-center mb-8'>
                         <h2 className='text-2xl font-bold text-white'>設定</h2>
                         <button
-                            onClick={() => setIsSideMenuOpen(false)}
+                            onClick={() => {
+                                setIsSideMenuOpen(false);
+                                closeHelp();
+                            }}
                             className='text-gray-400 hover:text-white text-2xl'>
                             ✕
                         </button>
@@ -73,9 +114,11 @@ export function SideMenu() {
                             <p className='text-gray-400 text-xs mt-2'>
                                 {TREE_TYPE_LABELS[treeType]}
                             </p>
-                            <p className='text-gray-500 text-xs mt-1'>
-                                📍 表示する木構造の種類を選択します
-                            </p>
+                            <button
+                                onClick={() => openHelp("treeType")}
+                                className='text-pink-300 hover:text-pink-200 text-xs mt-1'>
+                                木の種類についての解説
+                            </button>
                         </div>
 
                         {/* ノードグラデーション */}
@@ -108,9 +151,11 @@ export function SideMenu() {
                                     Burning Spring
                                 </option>
                             </select>
-                            <p className='text-gray-500 text-xs mt-2'>
-                                🎨 ノードの色を根から葉へ段階的に変化させます
-                            </p>
+                            <button
+                                onClick={() => openHelp("gradient")}
+                                className='text-purple-300 hover:text-purple-200 text-xs mt-2'>
+                                ノードグラデーションの種類における解説
+                            </button>
                         </div>
 
                         {/* ノードサイズ */}
@@ -131,9 +176,6 @@ export function SideMenu() {
                                 }
                                 className='w-full'
                             />
-                            <p className='text-gray-500 text-xs mt-2'>
-                                📏 3D空間に表示するノードのサイズを調整します
-                            </p>
                         </div>
 
                         {/* ライト強度 */}
@@ -156,9 +198,6 @@ export function SideMenu() {
                                 }
                                 className='w-full'
                             />
-                            <p className='text-gray-500 text-xs mt-2'>
-                                💡 シーンの照明の明るさを調整します
-                            </p>
                         </div>
 
                         {/* 背景色 */}
@@ -179,8 +218,8 @@ export function SideMenu() {
                             <p className='text-gray-400 text-xs mt-1'>
                                 {config.backgroundColor}
                             </p>
-                            <p className='text-gray-500 text-xs mt-1'>
-                                🎭 3D空間の背景色を変更します
+                            <p className='text-gray-400 text-xs mt-1'>
+                                🧿 3D空間の背景色を変更します
                             </p>
                         </div>
                     </div>
