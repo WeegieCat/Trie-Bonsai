@@ -1,4 +1,4 @@
-import type { GraphEdge, GraphNode } from "@/types/bonsai";
+import type { GraphEdge, GraphNode, TreeStructure } from "@/types/bonsai";
 import { TrieNode } from "./TrieNode";
 
 type QueueItem = {
@@ -8,7 +8,7 @@ type QueueItem = {
     z: number;
 };
 
-export class Trie {
+export class Trie implements TreeStructure {
     root: TrieNode;
     private nextNodeId: number;
 
@@ -175,7 +175,7 @@ export class Trie {
     }
 
     private createNodeId(): string {
-        const id = `node-${this.nextNodeId}`;
+        const id = `trie-${this.nextNodeId}`;
         this.nextNodeId += 1;
         return id;
     }
