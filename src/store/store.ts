@@ -8,6 +8,14 @@ interface BonsaiConfig {
     nodeSize: number;
     lightIntensity: number;
     backgroundColor: string;
+    nodeGradientPreset:
+        | "dustyGrass"
+        | "newLife"
+        | "blessing"
+        | "lemonGate"
+        | "oldHat"
+        | "wideMatrix"
+        | "burningSpring";
 }
 
 interface AppState {
@@ -35,7 +43,7 @@ export const useStore = create<AppState>((set) => ({
     setBonsaiData: (data) => set({ bonsaiData: data }),
     trieText: null,
     setTrieText: (text) => set({ trieText: text }),
-    treeType: "trie",
+    treeType: "patricia",
     setTreeType: (type) => set({ treeType: type }),
     generateBonsai: (input) => {
         set((state) => {
@@ -60,6 +68,7 @@ export const useStore = create<AppState>((set) => ({
         nodeSize: 1,
         lightIntensity: 1,
         backgroundColor: "#1a1a1a",
+        nodeGradientPreset: "dustyGrass",
     },
     setConfig: (newConfig) =>
         set((state) => ({

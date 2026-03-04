@@ -93,6 +93,36 @@ export function SideMenu() {
                             </p>
                         </div>
 
+                        {/* ノードグラデーション */}
+                        <div>
+                            <label className='block text-gray-300 text-sm font-medium mb-2'>
+                                ノードグラデーション
+                            </label>
+                            <select
+                                value={config.nodeGradientPreset}
+                                onChange={(e) =>
+                                    setConfig({
+                                        nodeGradientPreset: e.target.value as
+                                            | "dustyGrass"
+                                            | "newLife"
+                                            | "blessing"
+                                            | "lemonGate"
+                                            | "oldHat"
+                                            | "wideMatrix"
+                                            | "burningSpring",
+                                    })
+                                }
+                                className='w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'>
+                                <option value='dustyGrass'>Dusty Grass</option>
+                                <option value='newLife'>New Life</option>
+                                <option value='blessing'>Blessing</option>
+                                <option value='lemonGate'>Lemon Gate</option>
+                                <option value='oldHat'>Old Hat</option>
+                                <option value='wideMatrix'>Wide Matrix</option>
+                                <option value='burningSpring'>Burning Spring</option>
+                            </select>
+                        </div>
+
                         {/* エッジ色 */}
                         <div>
                             <label className='block text-gray-300 text-sm font-medium mb-2'>
@@ -183,6 +213,7 @@ export function SideMenu() {
                                 nodeSize: 1,
                                 lightIntensity: 1,
                                 backgroundColor: "#1a1a1a",
+                                nodeGradientPreset: "dustyGrass",
                             })
                         }
                         className='w-full mt-8 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition'>
