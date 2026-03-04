@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Trie Bonsai
 
-## Getting Started
+文字列を入力し、Trie木構造を3D空間に盆栽として可視化するWebアプリケーション。
 
-First, run the development server:
+## 📦 プロジェクト構成
+
+- **フロントエンド**: Next.js + React Three Fiber
+- **バックエンド**: Cloudflare Workers + Hono（Phase 6 で基盤構築完了）
+- **データベース**: Cloudflare D1（SQLite互換）
+- **ストレージ**: Cloudflare R2（S3互換）
+
+## 🚀 ローカル開発環境のセットアップ
+
+### 前提条件
+
+- Node.js 20.x 以上
+- npm または yarn
+- Git
+
+### フロントエンド（Next.js）の起動
 
 ```bash
+# リポジトリクローン
+git clone <repository-url>
+cd triebonsai
+
+# 依存関係インストール
+npm install
+
+# 開発サーバー起動
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+フロントエンドは `http://localhost:3000` で起動します。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### バックエンド（Worker）の起動（Phase 6〜）
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Worker ディレクトリへ移動
+cd workers/api
 
-## Learn More
+# 依存関係インストール
+npm install
 
-To learn more about Next.js, take a look at the following resources:
+# ローカル開発サーバー起動
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Worker は `http://localhost:8787` で起動します。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### 環境変数
 
-## Deploy on Vercel
+Worker の本番環境へのデプロイ時は以下の環境変数が必要です（ローカル開発では自動的にモック環境が利用されます）。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `CLOUDFLARE_ACCOUNT_ID`: Cloudflare アカウントID
+- `CLOUDFLARE_D1_DATABASE_ID`: D1 データベースID
+- `CLOUDFLARE_API_TOKEN`: Cloudflare API トークン
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+ローカル開発では `wrangler.toml` にダミーIDが設定済みで、そのまま起動可能です。
+
+## 📖 開発フェーズ
+
+このプロジェクは8フェーズのイテレーション開発で進行中です。詳細は [ロードマップ](docs/Trie-Bonsai.wiki/ロードマップ.md) を参照してください。
+
+- **Phase 1〜5**: フロントエンド実装（完了）
+- **Phase 6**: Edge基盤構築（完了） ← 現在ここ
+- **Phase 7**: 永続化実装（未着手）
+- **Phase 8**: ギャラリー・本番デプロイ（未着手）
+
+## 🛠️ 主要スクリプト
+
+### フロントエンド
+
+- `npm run dev`: 開発サーバー起動
+- `npm run build`: 本番ビルド
+- `npm run lint`: ESLint 実行
+
+### バックエンド（workers/api）
+
+- `npm run dev`: Wrangler 開発サーバー起動
+- `npm run typecheck`: TypeScript 型チェック
+- `npm run db:generate`: Drizzle ORM マイグレーション生成
+- `npm run deploy`: Cloudflare Workers への本番デプロイ
+
+## 📚 ドキュメント
+
+- [ロードマップ](docs/Trie-Bonsai.wiki/ロードマップ.md)
+- [要件定義書](docs/Trie-Bonsai.wiki/要件定義書.md)
+- [UML](docs/Trie-Bonsai.wiki/UML.md)
+
+## 🔧 技術スタック
+
+**Frontend**
+
+- Next.js 16
+- React Three Fiber
+- Zustand（状態管理）
+- TailwindCSS
+
+**Backend**
+
+- Cloudflare Workers
+- Hono
+- Drizzle ORM
+- Cloudflare D1 / R2
+
+## ライセンス
+
+このプロジェクトは個人学習・研究用途として開発されています。
