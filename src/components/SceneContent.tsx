@@ -1,9 +1,12 @@
 "use client";
 
 import { OrbitControls, PerspectiveCamera, Line } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Color } from "three";
 import { useStore } from "@/store/store";
+import type { BonsaiData, GraphEdge, GraphNode } from "@/types/bonsai";
 
 const NODE_GRADIENT_PRESETS = {
     dustyGrass: ["#d4fc79", "#96e6a1"],
@@ -52,14 +55,130 @@ function getColorFromStops(stops: readonly string[], ratio: number): string {
     return start.lerp(end, t).getStyle();
 }
 
+function getRevealOrder(data: BonsaiData): GraphNode[] {
+    if (data.nodes.length === 0) {
+        return [];
+    }
+
+    const nodeMap = new Map(data.nodes.map((node) => [node.id, node]));
+    const inDegree = new Map<string, number>();
+    const adjacency = new Map<string, string[]>();
+
+    data.nodes.forEach((node) => {
+        inDegree.set(node.id, 0);
+        adjacency.set(node.id, []);
+    });
+
+    data.edges.forEach((edge) => {
+        adjacency.get(edge.from)?.push(edge.to);
+        inDegree.set(edge.to, (inDegree.get(edge.to) ?? 0) + 1);
+    });
+
+    const roots = data.nodes
+        .filter((node) => (inDegree.get(node.id) ?? 0) === 0)
+        .sort((a, b) => a.y - b.y || a.id.localeCompare(b.id));
+
+    const visited = new Set<string>();
+    const queue = roots.map((root) => root.id);
+    const orderedIds: string[] = [];
+
+    while (queue.length > 0) {
+        const currentId = queue.shift();
+
+        if (!currentId || visited.has(currentId)) {
+            continue;
+        }
+
+        visited.add(currentId);
+        orderedIds.push(currentId);
+
+        const children = (adjacency.get(currentId) ?? [])
+            .map((childId) => nodeMap.get(childId))
+            .filter((node): node is GraphNode => Boolean(node))
+            .sort((a, b) => a.y - b.y || a.id.localeCompare(b.id));
+
+        children.forEach((child) => {
+            if (!visited.has(child.id)) {
+                queue.push(child.id);
+            }
+        });
+    }
+
+    data.nodes
+        .slice()
+        .sort((a, b) => a.y - b.y || a.id.localeCompare(b.id))
+        .forEach((node) => {
+            if (!visited.has(node.id)) {
+                orderedIds.push(node.id);
+            }
+        });
+
+    return orderedIds
+        .map((id) => nodeMap.get(id))
+        .filter((node): node is GraphNode => Boolean(node));
+}
+
+function getEdgeKey(edge: GraphEdge, index: number): string {
+    return `${edge.from}-${edge.to}-${index}`;
+}
+
 export function SceneContent() {
     const config = useStore((state) => state.config);
     const bonsaiData = useStore((state) => state.bonsaiData);
+    const [animationTime, setAnimationTime] = useState(0);
+    const animationStartTimeRef = useRef<number | null>(null);
+
+    const revealIntervalSec = 0.12;
+    const growDurationSec = 0.28;
 
     const yValues = bonsaiData?.nodes.map((node) => node.y) ?? [];
     const minY = yValues.length > 0 ? Math.min(...yValues) : 0;
     const maxY = yValues.length > 0 ? Math.max(...yValues) : 0;
     const gradientStops = NODE_GRADIENT_PRESETS[config.nodeGradientPreset];
+
+    const revealNodes = useMemo(
+        () => (bonsaiData ? getRevealOrder(bonsaiData) : []),
+        [bonsaiData],
+    );
+
+    const nodeStartTimeMap = useMemo(() => {
+        const map = new Map<string, number>();
+        revealNodes.forEach((node, index) => {
+            map.set(node.id, index * revealIntervalSec);
+        });
+        return map;
+    }, [revealNodes]);
+
+    const animationEndTime =
+        revealNodes.length > 0
+            ? (revealNodes.length - 1) * revealIntervalSec + growDurationSec
+            : 0;
+
+    useEffect(() => {
+        animationStartTimeRef.current =
+            typeof performance !== "undefined" ? performance.now() : Date.now();
+        setAnimationTime(0);
+    }, [bonsaiData]);
+
+    useFrame(() => {
+        if (!bonsaiData || revealNodes.length === 0 || animationEndTime <= 0) {
+            return;
+        }
+
+        const startTime = animationStartTimeRef.current;
+        if (startTime === null) {
+            return;
+        }
+
+        const now =
+            typeof performance !== "undefined" ? performance.now() : Date.now();
+        const elapsed = (now - startTime) / 1000;
+        const clamped = Math.min(elapsed, animationEndTime);
+
+        setAnimationTime((previous) =>
+            Math.abs(previous - clamped) < 0.001 ? previous : clamped,
+        );
+    });
 
     return (
         <>
@@ -83,6 +202,11 @@ export function SceneContent() {
                 <>
                     {/* エッジ（線）をレンダリング */}
                     {bonsaiData.edges.map((edge, idx) => {
+                        const edgeStartTime = nodeStartTimeMap.get(edge.to) ?? 0;
+                        if (animationTime < edgeStartTime) {
+                            return null;
+                        }
+
                         const fromNode = bonsaiData.nodes.find(
                             (n) => n.id === edge.from,
                         );
@@ -96,7 +220,7 @@ export function SceneContent() {
 
                         return (
                             <Line
-                                key={`edge-${idx}`}
+                                key={getEdgeKey(edge, idx)}
                                 points={[
                                     [fromNode.x, fromNode.y, fromNode.z],
                                     [toNode.x, toNode.y, toNode.z],
@@ -108,7 +232,20 @@ export function SceneContent() {
                     })}
 
                     {/* ノード（球体）をレンダリング */}
-                    {bonsaiData.nodes.map((node) => {
+                    {revealNodes.map((node) => {
+                        const nodeStartTime = nodeStartTimeMap.get(node.id) ?? 0;
+                        const progress = Math.min(
+                            1,
+                            Math.max(
+                                0,
+                                (animationTime - nodeStartTime) / growDurationSec,
+                            ),
+                        );
+
+                        if (progress <= 0) {
+                            return null;
+                        }
+
                         const ratio =
                             maxY === minY ? 0 : (node.y - minY) / (maxY - minY);
                         const depthColor = getColorFromStops(
@@ -120,6 +257,7 @@ export function SceneContent() {
                             <mesh
                                 key={node.id}
                                 position={[node.x, node.y, node.z]}
+                                scale={[progress, progress, progress]}
                                 castShadow>
                                 <sphereGeometry
                                     args={[node.size * config.nodeSize, 16, 16]}
