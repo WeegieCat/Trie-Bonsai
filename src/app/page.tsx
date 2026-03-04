@@ -11,7 +11,7 @@ export default function Home() {
             <Header />
 
             <div className='max-w-7xl mx-auto px-6 py-12 text-center'>
-                <h1 className='text-5xl font-bold '>🌿 String Bonsai</h1>
+                <h1 className='text-5xl font-bold '>🌿 Trie Bonsai</h1>
                 <p className='text-gray-400 text-lg mt-4'>
                     文字列から生まれる、美しい盆栽。
                 </p>

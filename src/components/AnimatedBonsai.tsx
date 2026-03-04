@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface Node {
     id: string;
@@ -16,85 +16,109 @@ interface Edge {
 }
 
 export function AnimatedBonsai() {
-    const [nodes, setNodes] = useState<Node[]>([]);
-    const [edges, setEdges] = useState<Edge[]>([]);
-    const [progress, setProgress] = useState(0);
+    const [elapsedSec, setElapsedSec] = useState(0);
 
-    useEffect(() => {
-        // シンプルなツリー構造をジェネレート
-        const generateTree = () => {
-            const nodes: Node[] = [];
-            const edges: Edge[] = [];
-            let id = 0;
+    const { allNodes, allEdges } = useMemo(() => {
+        const nodes: Node[] = [];
+        const edges: Edge[] = [];
+        let id = 0;
 
-            // ルートノード
-            nodes.push({ id: `node-${id}`, x: 0, y: 0, z: 0, size: 1.5 });
-            let parentId = id;
+        nodes.push({ id: `node-${id}`, x: 0, y: 0, z: 0, size: 1.5 });
+        const rootId = id;
+        id++;
+
+        for (let i = 0; i < 5; i++) {
+            const angle = (i / 5) * Math.PI * 2;
+            const x = Math.cos(angle) * 3;
+            const z = Math.sin(angle) * 3;
+
+            nodes.push({
+                id: `node-${id}`,
+                x,
+                y: 2,
+                z,
+                size: 1,
+            });
+
+            edges.push({ from: `node-${rootId}`, to: `node-${id}` });
+            const currentParentId = id;
             id++;
 
-            // レイア1: 5つの子ノード
-            for (let i = 0; i < 5; i++) {
-                const angle = (i / 5) * Math.PI * 2;
-                const x = Math.cos(angle) * 3;
-                const z = Math.sin(angle) * 3;
+            for (let j = 0; j < 2; j++) {
+                const subAngle = angle + (j - 0.5) * 0.8;
+                const subX = Math.cos(subAngle) * 2 + x;
+                const subZ = Math.sin(subAngle) * 2 + z;
+
                 nodes.push({
                     id: `node-${id}`,
-                    x,
-                    y: 2,
-                    z,
-                    size: 1,
+                    x: subX,
+                    y: 4,
+                    z: subZ,
+                    size: 0.7,
                 });
-                edges.push({ from: `node-${parentId}`, to: `node-${id}` });
-                const currentParent = id;
+
+                edges.push({
+                    from: `node-${currentParentId}`,
+                    to: `node-${id}`,
+                });
+
                 id++;
-
-                // レイア2: 各子から2-3つのサブノード
-                for (let j = 0; j < 2; j++) {
-                    const subAngle = angle + (j - 0.5) * 0.8;
-                    const subX = Math.cos(subAngle) * 2 + x;
-                    const subZ = Math.sin(subAngle) * 2 + z;
-                    nodes.push({
-                        id: `node-${id}`,
-                        x: subX,
-                        y: 4,
-                        z: subZ,
-                        size: 0.7,
-                    });
-                    edges.push({
-                        from: `node-${currentParent}`,
-                        to: `node-${id}`,
-                    });
-                    id++;
-                }
             }
+        }
 
-            return { nodes, edges };
-        };
+        return { allNodes: nodes, allEdges: edges };
+    }, []);
 
-        const { nodes: allNodes, edges: allEdges } = generateTree();
+    const revealIntervalSec = 0.12;
+    const growDurationSec = 0.28;
+    const pauseSec = 0.8;
 
-        // アニメーション進度に応じてノードを表示
-        const visibleCount = Math.ceil((progress / 100) * allNodes.length);
-        setNodes(allNodes.slice(0, visibleCount));
+    const nodeStartTimeMap = useMemo(() => {
+        const map = new Map<string, number>();
+        allNodes.forEach((node, index) => {
+            map.set(node.id, index * revealIntervalSec);
+        });
+        return map;
+    }, [allNodes]);
 
-        // エッジもノードに合わせて表示
-        const visibleIds = new Set(
-            allNodes.slice(0, visibleCount).map((n) => n.id),
-        );
-        setEdges(
-            allEdges.filter(
-                (e) => visibleIds.has(e.from) && visibleIds.has(e.to),
-            ),
-        );
-    }, [progress]);
+    const animationEndSec =
+        allNodes.length > 0
+            ? (allNodes.length - 1) * revealIntervalSec + growDurationSec
+            : 0;
+    const loopDurationSec = animationEndSec + pauseSec;
 
     useEffect(() => {
-        // 自動アニメーション
-        const interval = setInterval(() => {
-            setProgress((prev) => (prev >= 100 ? 0 : prev + 1));
-        }, 50);
-        return () => clearInterval(interval);
-    }, []);
+        let frameId = 0;
+        const startTime = performance.now();
+
+        const animate = () => {
+            const now = performance.now();
+            const elapsed = (now - startTime) / 1000;
+            const loopedElapsed =
+                loopDurationSec > 0 ? elapsed % loopDurationSec : 0;
+
+            setElapsedSec(loopedElapsed);
+            frameId = requestAnimationFrame(animate);
+        };
+
+        frameId = requestAnimationFrame(animate);
+
+        return () => {
+            cancelAnimationFrame(frameId);
+        };
+    }, [loopDurationSec]);
+
+    const progress =
+        loopDurationSec > 0
+            ? Math.round((Math.min(elapsedSec, animationEndSec) / animationEndSec) * 100)
+            : 0;
+
+    const visibleEdges = useMemo(() => {
+        return allEdges.filter((edge) => {
+            const childStartTime = nodeStartTimeMap.get(edge.to) ?? 0;
+            return elapsedSec >= childStartTime;
+        });
+    }, [allEdges, elapsedSec, nodeStartTimeMap]);
 
     return (
         <div className='w-full h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-black'>
@@ -105,9 +129,9 @@ export function AnimatedBonsai() {
                     filter: "drop-shadow(0 0 20px rgba(74, 222, 128, 0.3))",
                 }}>
                 {/* エッジ（線） */}
-                {edges.map((edge, idx) => {
-                    const fromNode = nodes.find((n) => n.id === edge.from);
-                    const toNode = nodes.find((n) => n.id === edge.to);
+                {visibleEdges.map((edge, idx) => {
+                    const fromNode = allNodes.find((n) => n.id === edge.from);
+                    const toNode = allNodes.find((n) => n.id === edge.to);
                     if (!fromNode || !toNode) return null;
 
                     return (
@@ -125,20 +149,31 @@ export function AnimatedBonsai() {
                 })}
 
                 {/* ノード（球） */}
-                {nodes.map((node, idx) => (
-                    <circle
-                        key={node.id}
-                        cx={node.x}
-                        cy={node.y}
-                        r={node.size * 0.15}
-                        fill='#4CAF50'
-                        opacity={0.8 + Math.sin(Date.now() / 500 + idx) * 0.2}
-                        style={{
-                            filter: "drop-shadow(0 0 4px rgba(76, 175, 80, 0.8))",
-                            transition: "opacity 0.3s ease",
-                        }}
-                    />
-                ))}
+                {allNodes.map((node) => {
+                    const startTime = nodeStartTimeMap.get(node.id) ?? 0;
+                    const scale = Math.min(
+                        1,
+                        Math.max(0, (elapsedSec - startTime) / growDurationSec),
+                    );
+
+                    if (scale <= 0) {
+                        return null;
+                    }
+
+                    return (
+                        <circle
+                            key={node.id}
+                            cx={node.x}
+                            cy={node.y}
+                            r={node.size * 0.15 * scale}
+                            fill='#4CAF50'
+                            opacity={0.55 + scale * 0.35}
+                            style={{
+                                filter: "drop-shadow(0 0 4px rgba(76, 175, 80, 0.8))",
+                            }}
+                        />
+                    );
+                })}
             </svg>
 
             {/* プログレスバー */}
