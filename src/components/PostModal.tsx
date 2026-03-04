@@ -6,7 +6,7 @@ import { useStore } from "@/store/store";
 interface PostModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (name: string) => void;
+    onSubmit: (data: { name: string; imageDataUrl: string }) => void;
 }
 
 export function PostModal({ isOpen, onClose, onSubmit }: PostModalProps) {
@@ -65,8 +65,8 @@ export function PostModal({ isOpen, onClose, onSubmit }: PostModalProps) {
     }, [isOpen, config.backgroundType, setConfig]);
 
     const handleSubmit = () => {
-        if (!bonsaiName.trim()) return;
-        onSubmit(bonsaiName);
+        if (!bonsaiName.trim() || !previewImage) return;
+        onSubmit({ name: bonsaiName, imageDataUrl: previewImage });
         setBonsaiName("");
     };
 

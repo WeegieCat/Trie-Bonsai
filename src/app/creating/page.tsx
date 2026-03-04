@@ -11,6 +11,7 @@ import { Footer } from "@/components/Footer";
 import { PostModal } from "@/components/PostModal";
 import { DEFAULT_TRIE_INPUT } from "@/lib/constants/defaultTrieInput";
 import { useStore } from "@/store/store";
+import { submitBonsai } from "@/lib/api/bonsai";
 
 export default function Creating() {
     const [isPostModalOpen, setIsPostModalOpen] = useState(false);
@@ -18,6 +19,8 @@ export default function Creating() {
     const setTreeType = useStore((state) => state.setTreeType);
     const setInputValue = useStore((state) => state.setInputValue);
     const generateBonsai = useStore((state) => state.generateBonsai);
+    const bonsaiData = useStore((state) => state.bonsaiData);
+    const config = useStore((state) => state.config);
 
     useEffect(() => {
         setTreeType("trie");
@@ -25,9 +28,28 @@ export default function Creating() {
         generateBonsai(DEFAULT_TRIE_INPUT);
     }, [generateBonsai, setInputValue, setTreeType]);
 
-    const handleSubmit = (name: string) => {
-        setIsPostModalOpen(false);
-        router.push("/gallery");
+    const handleSubmit = async (data: {
+        name: string;
+        imageDataUrl: string;
+    }) => {
+        try {
+            const response = await submitBonsai({
+                title: data.name,
+                imageDataUrl: data.imageDataUrl,
+                treeData: bonsaiData,
+                configData: config,
+            });
+
+            if (response.success) {
+                setIsPostModalOpen(false);
+                router.push(response.url || "/gallery");
+            } else {
+                console.error("投稿に失敗しました:", response.error);
+                // Phase 7でエラーUIを追加予定
+            }
+        } catch (error) {
+            console.error("投稿処理でエラーが発生しました:", error);
+        }
     };
 
     return (
