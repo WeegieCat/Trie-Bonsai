@@ -10,6 +10,7 @@ export function UIOverlay() {
         useState(false);
     const inputValue = useStore((state) => state.inputValue);
     const setInputValue = useStore((state) => state.setInputValue);
+    const generateBonsai = useStore((state) => state.generateBonsai);
     const setIsSideMenuOpen = useStore((state) => state.setIsSideMenuOpen);
 
     useEffect(() => {
@@ -23,8 +24,10 @@ export function UIOverlay() {
     };
 
     const handleGenerate = () => {
-        if (currentInput.trim()) {
-            setInputValue(currentInput);
+        const trimmedInput = currentInput.trim();
+        if (trimmedInput) {
+            setInputValue(trimmedInput);
+            generateBonsai(trimmedInput);
             setCurrentInput("");
         }
     };
