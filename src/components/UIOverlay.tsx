@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useStore } from "@/store/store";
 
 export function UIOverlay() {
@@ -9,17 +9,11 @@ export function UIOverlay() {
     const [isDownloadModalAnimating, setIsDownloadModalAnimating] =
         useState(false);
     const [isDebugOpen, setIsDebugOpen] = useState(false);
-    const inputValue = useStore((state) => state.inputValue);
+    const [isOverlayHidden, setIsOverlayHidden] = useState(false);
     const setInputValue = useStore((state) => state.setInputValue);
     const generateBonsai = useStore((state) => state.generateBonsai);
     const trieText = useStore((state) => state.trieText);
     const setIsSideMenuOpen = useStore((state) => state.setIsSideMenuOpen);
-
-    useEffect(() => {
-        if (isDownloadModalOpen) {
-            setIsDownloadModalAnimating(true);
-        }
-    }, [isDownloadModalOpen]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCurrentInput(e.target.value);
@@ -60,6 +54,7 @@ export function UIOverlay() {
     };
 
     const handleOpenDownloadModal = () => {
+        setIsDownloadModalAnimating(true);
         setIsDownloadModalOpen(true);
     };
 
@@ -79,7 +74,12 @@ export function UIOverlay() {
         <>
             <div className='absolute inset-0 pointer-events-none'>
                 {/* トップバー */}
-                <div className='absolute top-0 left-0 right-0 p-6 pointer-events-auto'>
+                <div
+                    className={`absolute top-0 left-0 right-0 p-6 transition-all duration-500 ease-in-out ${
+                        isOverlayHidden
+                            ? "-translate-y-10 opacity-0 pointer-events-none"
+                            : "translate-y-0 opacity-100 pointer-events-auto"
+                    }`}>
                     <div className='max-w-2xl mx-auto'>
                         {/* タイトル */}
                         <h1 className='text-4xl font-bold text-white mb-6 text-center'>
@@ -117,6 +117,23 @@ export function UIOverlay() {
                 {/* 右下ボタングループ */}
                 <div className='absolute bottom-24 right-8 pointer-events-auto flex items-center gap-3'>
                     <button
+                        onClick={() => setIsOverlayHidden((prev) => !prev)}
+                        className='px-4 h-14 bg-gray-800 bg-opacity-80 backdrop-blur hover:bg-gray-700 text-white rounded-full shadow-lg transition flex items-center justify-center font-bold'
+                        title={
+                            isOverlayHidden
+                                ? "UIOverlayを元に戻す"
+                                : "全体像を確認"
+                        }>
+                        {isOverlayHidden ? "戻す" : "全体像"}
+                    </button>
+
+                    <div
+                        className={`flex items-center gap-3 transition-all duration-500 ease-in-out ${
+                            isOverlayHidden
+                                ? "translate-x-6 opacity-0 pointer-events-none"
+                                : "translate-x-0 opacity-100"
+                        }`}>
+                    <button
                         onClick={handleOpenDownloadModal}
                         className='w-14 h-14 bg-gray-800 bg-opacity-80 backdrop-blur hover:bg-gray-700 text-white rounded-full shadow-lg transition flex items-center justify-center'
                         title='盆栽を画像保存'>
@@ -150,11 +167,17 @@ export function UIOverlay() {
                             />
                         </svg>
                     </button>
+                    </div>
                 </div>
 
                 {/* デバッグパネル（左下） */}
                 {trieText && (
-                    <div className='absolute bottom-8 left-8 pointer-events-auto'>
+                    <div
+                        className={`absolute bottom-8 left-8 transition-all duration-500 ease-in-out ${
+                            isOverlayHidden
+                                ? "-translate-x-8 opacity-0 pointer-events-none"
+                                : "translate-x-0 opacity-100 pointer-events-auto"
+                        }`}>
                         <button
                             onClick={() => setIsDebugOpen(!isDebugOpen)}
                             className='mb-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-bold rounded-lg transition text-sm'>

@@ -118,75 +118,60 @@ export class Trie {
 
     toASCII(): string {
         const lines: string[] = ["[Root]"];
-        const visited = new Set<TrieNode>();
 
-        const dfs = (node: TrieNode, prefix: string, isLast: boolean) => {
-            visited.add(node);
-
+        const dfs = (
+            node: TrieNode,
+            prefix: string,
+            currentWord: string,
+            depth: number,
+        ) => {
             const children = Array.from(node.children.values());
+
+            if (children.length === 0) {
+                return;
+            }
+
+            // Root の直下の子ノード群の場合、最初に「|」を挿入
+            if (depth === 0) {
+                lines.push("  |");
+            }
 
             children.forEach((child, index) => {
                 const isLastChild = index === children.length - 1;
                 const connector = isLastChild ? "└─" : "├─";
-                const nextPrefix = isLastChild ? "   " : "|  ";
+                const nextVertical = isLastChild ? "   " : "|  ";
 
-                const endMarker = child.isEndOfWord
-                    ? ` [End: ${this.extractWord(child)}]`
-                    : "";
-                lines.push(`${prefix}${connector} "${child.char}"${endMarker}`);
+                // 現在のノードの文字を単語に追加
+                const newWord = currentWord + child.char;
+                const depthComment = `(${depth + 1}文字目)`;
+                const endMarker = child.isEndOfWord ? ` [End: ${newWord}]` : "";
 
-                if (!visited.has(child)) {
-                    dfs(child, prefix + nextPrefix, isLastChild);
+                // ダッシュの長さを動的に計算
+                const baseLine = `${prefix}${connector} "${child.char}"`;
+                const totalCommentLength =
+                    depthComment.length + endMarker.length;
+                const dashCount = Math.max(
+                    1,
+                    25 - baseLine.length - totalCommentLength,
+                );
+                const dashes = "-".repeat(dashCount);
+
+                lines.push(`${baseLine} ${dashes} ${depthComment}${endMarker}`);
+
+                // 子ノードがあれば再帰的に処理
+                if (child.children.size > 0) {
+                    dfs(child, prefix + nextVertical, newWord, depth + 1);
+                }
+
+                // Root レベル（depth === 0）の場合、兄弟ノード間に「|」を挿入
+                if (depth === 0 && !isLastChild) {
+                    lines.push("  |");
                 }
             });
         };
 
-        dfs(this.root, "", true);
+        dfs(this.root, "  ", "", 0);
         return lines.join("\n");
-    }
-
-    private extractWord(node: TrieNode): string {
-        const chars: string[] = [];
-        let current: TrieNode | null = node;
-
-        while (current && current.char !== null) {
-            chars.unshift(current.char);
-            // 親を見つけるためにルートから探索する必要があるので、
-            // ここは node.char を使って文字列を表現
-            break; // シンプルな実装: 現在のノード文字のみ
-        }
-
-        // より正確な実装: ノードチェーンを辿る
-        // ただし、TrieNode に親への参照がないため、別途実装が必要
-        // ここは簡易版として、子から親への逆走査ができないため、名前付けを工夫
-        return this.getWordFromNode(node);
-    }
-
-    private getWordFromNode(targetNode: TrieNode): string {
-        const word: string[] = [];
-
-        const findPath = (node: TrieNode): boolean => {
-            if (node === targetNode) {
-                if (node.char !== null) {
-                    word.push(node.char);
-                }
-                return true;
-            }
-
-            for (const [char, child] of node.children) {
-                if (findPath(child)) {
-                    if (node.char !== null) {
-                        word.unshift(node.char);
-                    }
-                    return true;
-                }
-            }
-
-            return false;
-        };
-
-        findPath(this.root);
-        return word.join("");
     }
 
     private createNodeId(): string {

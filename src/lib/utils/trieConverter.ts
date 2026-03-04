@@ -11,7 +11,11 @@ export function buildTrieFromInput(input: string): Trie {
     const words = sanitizeInput(input);
 
     words.forEach((word) => {
-        trie.insert(word);
+        // 単一文字列でも分岐が生まれるよう、すべての接尾辞を登録
+        const suffixes = collectSuffixes(word);
+        suffixes.forEach((suffix) => {
+            trie.insert(suffix);
+        });
     });
 
     return trie;
@@ -119,4 +123,14 @@ function sanitizeInput(input: string): string[] {
         .split(/\s+/)
         .map((word) => word.trim())
         .filter((word) => word.length > 0);
+}
+
+function collectSuffixes(word: string): string[] {
+    const suffixSet = new Set<string>();
+
+    for (let i = 0; i < word.length; i++) {
+        suffixSet.add(word.substring(i));
+    }
+
+    return Array.from(suffixSet);
 }
