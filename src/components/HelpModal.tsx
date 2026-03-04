@@ -24,8 +24,7 @@ const gradientDescriptions = {
         "ピンクから深紫へ至る7色の大胆なグラデーション。色の多様性により深い階層をはっきりと区別できます。",
     burningSpring:
         "緑から暗い藍色へ移行する7色グラデーション。季節の変化を表現し、根から葉への成長過程が直感的に伝わります。",
-    mochiHoppe:
-        "黄色からシアン、ピンクへと鮮やかに変化する3色グラデーション。ポップで親しみやすい配色で、カラフルな階層表現が特徴です。",
+    mochiHoppe: "もちもちほっぺをぷにぷにしたくなるような色合いです。",
 };
 
 const gradientNames = [
@@ -138,15 +137,6 @@ export function HelpModal({ topic, isVisible, onClose }: HelpModalProps) {
                                     </div>
                                 );
                             })}
-
-                            <div className='bg-slate-600/50 border border-slate-500 rounded-md px-4 py-3'>
-                                <p className='text-yellow-200 font-semibold mb-1'>
-                                    💡 使い方のヒント
-                                </p>
-                                <p className='text-gray-200 text-xs leading-6'>
-                                    グラデーションは木の深さレベルに応じて自動で割り当てられます。根に近いノードと葉に近いノードの色差が大きいほど、階層が把握しやすくなります。
-                                </p>
-                            </div>
                         </>
                     )}
                 </div>
