@@ -29,15 +29,15 @@ export class Trie implements TreeStructure {
 
             if (existingChild) {
                 currentNode = existingChild;
-                continue;
+            } else {
+                const newNode = new TrieNode(char, this.createNodeId());
+                currentNode.children.set(char, newNode);
+                currentNode = newNode;
             }
 
-            const newNode = new TrieNode(char, this.createNodeId());
-            currentNode.children.set(char, newNode);
-            currentNode = newNode;
+            // 全ての接頭辞を登録
+            currentNode.isEndOfWord = true;
         }
-
-        currentNode.isEndOfWord = true;
     }
 
     search(word: string): boolean {
