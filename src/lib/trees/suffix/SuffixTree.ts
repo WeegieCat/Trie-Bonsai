@@ -10,11 +10,11 @@ type QueueItem = {
 
 /**
  * サフィックス木（Suffix Tree）クラス
- * 
+ *
  * 実装：ナイーブ版（すべてのサフィックスを順次挿入）
  * - 複雑性：O(n²) - 実装が簡潔だが、大規模な文字列には不向き
  * - Ukkonen's Algorithmへの最適化は将来の拡張
- * 
+ *
  * 特徴：
  * - すべてのサフィックスを保持
  * - パターン検索に特化（部分文字列検出）
@@ -60,7 +60,7 @@ export class SuffixTree implements TreeStructure {
     private insertSuffixRecursive(
         node: SuffixNode,
         suffixStart: number,
-        textEnd: number
+        textEnd: number,
     ): void {
         if (suffixStart >= textEnd) {
             node.isEndOfWord = true;
@@ -72,7 +72,11 @@ export class SuffixTree implements TreeStructure {
 
         if (!existingChild) {
             // 新しいノードを作成して追加
-            const newNode = new SuffixNode(suffixStart, textEnd, this.createNodeId());
+            const newNode = new SuffixNode(
+                suffixStart,
+                textEnd,
+                this.createNodeId(),
+            );
             newNode.isEndOfWord = true;
             node.children.set(firstChar, newNode);
             return;
@@ -87,11 +91,18 @@ export class SuffixTree implements TreeStructure {
             this.insertSuffixRecursive(
                 existingChild,
                 suffixStart + matchLength,
-                textEnd
+                textEnd,
             );
         } else {
             // エッジラベルの途中で分岐 → ノードを分割
-            this.splitNode(node, existingChild, firstChar, matchLength, suffixStart, textEnd);
+            this.splitNode(
+                node,
+                existingChild,
+                firstChar,
+                matchLength,
+                suffixStart,
+                textEnd,
+            );
         }
     }
 
@@ -112,7 +123,8 @@ export class SuffixTree implements TreeStructure {
         while (
             matchLength < edgeLength &&
             suffixStart + matchLength < this.text.length &&
-            this.text[suffixStart + matchLength] === this.text[childNode.edgeStart + matchLength]
+            this.text[suffixStart + matchLength] ===
+                this.text[childNode.edgeStart + matchLength]
         ) {
             matchLength++;
         }
@@ -129,13 +141,17 @@ export class SuffixTree implements TreeStructure {
         firstChar: string,
         matchLength: number,
         suffixStart: number,
-        textEnd: number
+        textEnd: number,
     ): void {
         const splitStart = child.edgeStart;
         const splitEnd = splitStart + matchLength;
 
         // 分割ノードを作成
-        const splitNode = new SuffixNode(splitStart, splitEnd, this.createNodeId());
+        const splitNode = new SuffixNode(
+            splitStart,
+            splitEnd,
+            this.createNodeId(),
+        );
 
         // 元の子ノードのエッジを更新
         child.edgeStart = splitEnd;
@@ -148,10 +164,13 @@ export class SuffixTree implements TreeStructure {
             const newNode = new SuffixNode(
                 suffixStart + matchLength,
                 textEnd,
-                this.createNodeId()
+                this.createNodeId(),
             );
             newNode.isEndOfWord = true;
-            splitNode.children.set(this.text[suffixStart + matchLength], newNode);
+            splitNode.children.set(
+                this.text[suffixStart + matchLength],
+                newNode,
+            );
         } else {
             splitNode.isEndOfWord = true;
         }
@@ -171,7 +190,11 @@ export class SuffixTree implements TreeStructure {
         return this.searchRecursive(this.root, word, 0);
     }
 
-    private searchRecursive(node: SuffixNode, word: string, wordIndex: number): boolean {
+    private searchRecursive(
+        node: SuffixNode,
+        word: string,
+        wordIndex: number,
+    ): boolean {
         if (wordIndex >= word.length) {
             return node.isEndOfWord;
         }
@@ -220,7 +243,9 @@ export class SuffixTree implements TreeStructure {
             const { node, depth, x, z } = current;
 
             // ノードサイズ（ルートは大きく、深くなるほど小さく）
-            const nodeSize = node.isRoot ? 1.5 : Math.max(1.2 - depth * 0.1, 0.6);
+            const nodeSize = node.isRoot
+                ? 1.5
+                : Math.max(1.2 - depth * 0.1, 0.6);
 
             // グラフノードを追加
             nodes.push({
@@ -237,7 +262,8 @@ export class SuffixTree implements TreeStructure {
 
             children.forEach((child, index) => {
                 // 放射状に配置
-                const angle = (index / Math.max(childrenCount, 1)) * Math.PI * 2;
+                const angle =
+                    (index / Math.max(childrenCount, 1)) * Math.PI * 2;
                 const radius = 2 + depth * 0.8;
                 const childX = x + Math.cos(angle) * radius;
                 const childZ = z + Math.sin(angle) * radius;
@@ -278,9 +304,11 @@ export class SuffixTree implements TreeStructure {
         node: SuffixNode,
         prefix: string,
         isLast: boolean,
-        lines: string[]
+        lines: string[],
     ): void {
-        const edgeLabel = node.isRoot ? "ROOT" : `"${this.getEdgeLabel(node)}"${node.isEndOfWord ? " ●" : ""}`;
+        const edgeLabel = node.isRoot
+            ? "ROOT"
+            : `"${this.getEdgeLabel(node)}"${node.isEndOfWord ? " ●" : ""}`;
         const connector = node.isRoot ? "" : isLast ? "└─ " : "├─ ";
         lines.push(prefix + connector + edgeLabel);
 
@@ -289,7 +317,9 @@ export class SuffixTree implements TreeStructure {
 
         children.forEach((child, index) => {
             const isLastChild = index === childCount - 1;
-            const childPrefix = node.isRoot ? "" : prefix + (isLast ? "   " : "│  ");
+            const childPrefix = node.isRoot
+                ? ""
+                : prefix + (isLast ? "   " : "│  ");
             this.toASCIIRecursive(child, childPrefix, isLastChild, lines);
         });
     }
