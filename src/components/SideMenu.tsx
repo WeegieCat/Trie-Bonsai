@@ -1,12 +1,17 @@
 "use client";
 
 import { useStore } from "@/store/store";
+import { TREE_TYPE_LABELS } from "@/lib/trees/common/types";
 
 export function SideMenu() {
     const isSideMenuOpen = useStore((state) => state.isSideMenuOpen);
     const setIsSideMenuOpen = useStore((state) => state.setIsSideMenuOpen);
+    const treeType = useStore((state) => state.treeType);
+    const setTreeType = useStore((state) => state.setTreeType);
     const config = useStore((state) => state.config);
     const setConfig = useStore((state) => state.setConfig);
+    const generateBonsai = useStore((state) => state.generateBonsai);
+    const inputValue = useStore((state) => state.inputValue);
 
     return (
         <>
@@ -36,6 +41,38 @@ export function SideMenu() {
 
                     {/* 設定項目 */}
                     <div className='space-y-6'>
+                        {/* 木の種類選択 */}
+                        <div>
+                            <label className='block text-gray-300 text-sm font-medium mb-2'>
+                                🌳 木の種類
+                            </label>
+                            <select
+                                value={treeType}
+                                onChange={(e) => {
+                                    const newType = e.target.value as
+                                        | "trie"
+                                        | "patricia"
+                                        | "suffix";
+                                    setTreeType(newType);
+                                    // 木タイプを変更したら、現在の入力で再生成
+                                    if (inputValue) {
+                                        generateBonsai(inputValue);
+                                    }
+                                }}
+                                className='w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'>
+                                <option value='trie'>トライ木 (Trie)</option>
+                                <option value='patricia'>
+                                    パトリシア木 (Patricia/Radix)
+                                </option>
+                                <option value='suffix' disabled>
+                                    サフィックス木 (Suffix) - 準備中
+                                </option>
+                            </select>
+                            <p className='text-gray-400 text-xs mt-2'>
+                                {TREE_TYPE_LABELS[treeType]}
+                            </p>
+                        </div>
+
                         {/* ノード色 */}
                         <div>
                             <label className='block text-gray-300 text-sm font-medium mb-2'>
