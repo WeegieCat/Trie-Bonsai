@@ -173,7 +173,6 @@ export function UIOverlay() {
                         </button>
                     </div>
                 </div>
-
             </div>
 
             {isDownloadModalOpen && (

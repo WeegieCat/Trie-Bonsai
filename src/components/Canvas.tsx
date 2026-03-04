@@ -10,7 +10,7 @@ export function BonsaiCanvas() {
     return (
         <div className='w-full h-full'>
             <Canvas
-                camera={{ position: [0, 5, 8], fov: 50 }}
+                camera={{ position: [0, 7, 18], fov: 50 }}
                 style={{
                     background: config.backgroundColor,
                     width: "100%",

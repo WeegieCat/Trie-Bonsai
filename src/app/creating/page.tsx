@@ -11,8 +11,7 @@ import { Footer } from "@/components/Footer";
 import { PostModal } from "@/components/PostModal";
 import { useStore } from "@/store/store";
 
-const DEFAULT_TRIE_INPUT =
-    "もちもちほっぺ もちもちもっちん もちもちもちち";
+const DEFAULT_TRIE_INPUT = "もちもちほっぺ もちもちもっちん もちもちもちち";
 
 export default function Creating() {
     const [isPostModalOpen, setIsPostModalOpen] = useState(false);
