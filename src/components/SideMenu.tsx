@@ -144,7 +144,8 @@ export function SideMenu() {
                                             | "lemonGate"
                                             | "oldHat"
                                             | "wideMatrix"
-                                            | "burningSpring",
+                                            | "burningSpring"
+                                            | "mochiHoppe",
                                     })
                                 }
                                 className='w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'>
@@ -157,6 +158,7 @@ export function SideMenu() {
                                 <option value='burningSpring'>
                                     Burning Spring
                                 </option>
+                                <option value='mochiHoppe'>Mochi Hoppe</option>
                             </select>
                             <button
                                 onClick={() => openHelp("gradient")}
@@ -170,7 +172,8 @@ export function SideMenu() {
                                             | "lemonGate"
                                             | "oldHat"
                                             | "wideMatrix"
-                                            | "burningSpring",
+                                            | "burningSpring"
+                                            | "mochiHoppe",
                                     ),
                                 }}>
                                 ノードグラデーションの種類における解説

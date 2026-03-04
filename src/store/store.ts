@@ -15,7 +15,8 @@ interface BonsaiConfig {
         | "lemonGate"
         | "oldHat"
         | "wideMatrix"
-        | "burningSpring";
+        | "burningSpring"
+        | "mochiHoppe";
 }
 
 interface AppState {

@@ -28,6 +28,7 @@ const NODE_GRADIENT_PRESETS = {
         "#6c4f63",
         "#432c39",
     ],
+    mochiHoppe: ["#fff446", "#00f3ff", "#ff70a7"],
 } as const;
 
 function getColorFromStops(stops: readonly string[], ratio: number): string {

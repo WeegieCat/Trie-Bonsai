@@ -24,6 +24,8 @@ const gradientDescriptions = {
         "ピンクから深紫へ至る7色の大胆なグラデーション。色の多様性により深い階層をはっきりと区別できます。",
     burningSpring:
         "緑から暗い藍色へ移行する7色グラデーション。季節の変化を表現し、根から葉への成長過程が直感的に伝わります。",
+    mochiHoppe:
+        "黄色からシアン、ピンクへと鮮やかに変化する3色グラデーション。ポップで親しみやすい配色で、カラフルな階層表現が特徴です。",
 };
 
 const gradientNames = [
@@ -34,6 +36,7 @@ const gradientNames = [
     "Old Hat",
     "Wide Matrix",
     "Burning Spring",
+    "Mochi Hoppe",
 ];
 
 const gradientKeys = [
@@ -44,6 +47,7 @@ const gradientKeys = [
     "oldHat",
     "wideMatrix",
     "burningSpring",
+    "mochiHoppe",
 ];
 
 function generateGradientBar(colors: string[]): string {
@@ -112,7 +116,9 @@ export function HelpModal({ topic, isVisible, onClose }: HelpModalProps) {
                             </p>
 
                             {gradientNames.map((name, index) => {
-                                const key = gradientKeys[index] as keyof typeof GRADIENT_COLORS;
+                                const key = gradientKeys[
+                                    index
+                                ] as keyof typeof GRADIENT_COLORS;
                                 const colors = GRADIENT_COLORS[key];
                                 return (
                                     <div key={key}>
@@ -122,7 +128,8 @@ export function HelpModal({ topic, isVisible, onClose }: HelpModalProps) {
                                         <div
                                             className='w-full h-11 rounded-md border border-slate-400/50'
                                             style={{
-                                                background: generateGradientBar(colors),
+                                                background:
+                                                    generateGradientBar(colors),
                                             }}
                                         />
                                         <p className='mt-2 text-gray-200'>

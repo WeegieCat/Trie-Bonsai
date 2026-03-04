@@ -5,7 +5,8 @@ export type GradientPreset =
     | "lemonGate"
     | "oldHat"
     | "wideMatrix"
-    | "burningSpring";
+    | "burningSpring"
+    | "mochiHoppe";
 
 export const GRADIENT_COLORS: Record<GradientPreset, string[]> = {
     dustyGrass: ["#d4fc79", "#96e6a1"],
@@ -31,6 +32,7 @@ export const GRADIENT_COLORS: Record<GradientPreset, string[]> = {
         "#6c4f63",
         "#432c39",
     ],
+    mochiHoppe: ["#fff446", "#00f3ff", "#ff70a7"],
 };
 
 // グラデーション選択ボタンの色に使う（開始色）
