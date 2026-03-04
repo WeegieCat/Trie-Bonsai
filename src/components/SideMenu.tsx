@@ -180,48 +180,6 @@ export function SideMenu() {
                             </button>
                         </div>
 
-                        {/* ノードサイズ */}
-                        <div>
-                            <label className='block text-gray-300 text-sm font-medium mb-2'>
-                                ノードサイズ: {config.nodeSize.toFixed(2)}
-                            </label>
-                            <input
-                                type='range'
-                                min='0.5'
-                                max='3'
-                                step='0.1'
-                                value={config.nodeSize}
-                                onChange={(e) =>
-                                    setConfig({
-                                        nodeSize: parseFloat(e.target.value),
-                                    })
-                                }
-                                className='w-full'
-                            />
-                        </div>
-
-                        {/* ライト強度 */}
-                        <div>
-                            <label className='block text-gray-300 text-sm font-medium mb-2'>
-                                ライト強度: {config.lightIntensity.toFixed(2)}
-                            </label>
-                            <input
-                                type='range'
-                                min='0.5'
-                                max='2'
-                                step='0.1'
-                                value={config.lightIntensity}
-                                onChange={(e) =>
-                                    setConfig({
-                                        lightIntensity: parseFloat(
-                                            e.target.value,
-                                        ),
-                                    })
-                                }
-                                className='w-full'
-                            />
-                        </div>
-
                         {/* 背景タイプ */}
                         <div>
                             <label className='block text-gray-300 text-sm font-medium mb-2'>
@@ -257,37 +215,12 @@ export function SideMenu() {
                                     : "🧿 単色の背景"}
                             </p>
                         </div>
-
-                        {/* 背景色 */}
-                        {config.backgroundType === "solid" && (
-                            <div>
-                                <label className='block text-gray-300 text-sm font-medium mb-2'>
-                                    背景色
-                                </label>
-                                <input
-                                    type='color'
-                                    value={config.backgroundColor}
-                                    onChange={(e) =>
-                                        setConfig({
-                                            backgroundColor: e.target.value,
-                                        })
-                                    }
-                                    className='w-full h-10 rounded cursor-pointer'
-                                />
-                                <p className='text-gray-400 text-xs mt-1'>
-                                    {config.backgroundColor}
-                                </p>
-                            </div>
-                        )}
                     </div>
 
                     {/* リセットボタン */}
                     <button
                         onClick={() =>
                             setConfig({
-                                nodeSize: 1,
-                                lightIntensity: 1,
-                                backgroundColor: "#1a1a1a",
                                 backgroundType: "stars",
                                 nodeGradientPreset: "dustyGrass",
                             })
