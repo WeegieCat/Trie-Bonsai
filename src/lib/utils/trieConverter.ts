@@ -1,5 +1,12 @@
-import type { BonsaiData, GraphEdge, GraphNode } from "@/types/bonsai";
+import type {
+    BonsaiData,
+    GraphEdge,
+    GraphNode,
+    TreeStructure,
+    TreeType,
+} from "@/types/bonsai";
 import { Trie } from "@/lib/trees/trie/Trie";
+import { PatriciaTrie } from "@/lib/trees/patricia/PatriciaTrie";
 
 type GraphInput = {
     nodes: GraphNode[];
@@ -18,6 +25,45 @@ export function buildTrieFromInput(input: string): Trie {
     });
 
     return trie;
+}
+
+export function buildPatriciaFromInput(input: string): PatriciaTrie {
+    const patricia = new PatriciaTrie();
+    const words = sanitizeInput(input);
+
+    words.forEach((word) => {
+        // パトリシア木の場合：すべての接頭辞を登録
+        // （トライ木と同様、段階的な成長を3D可視化で表現するため）
+        for (let i = 1; i <= word.length; i++) {
+            patricia.insert(word.substring(0, i));
+        }
+    });
+
+    return patricia;
+}
+
+/**
+ * 指定された木タイプで、入力文字列から木を構築する
+ * @param type 木のタイプ ('trie' | 'patricia' | 'suffix')
+ * @param input 入力文字列
+ * @returns 構築された木構造
+ */
+export function buildTreeFromInput(
+    type: TreeType,
+    input: string,
+): TreeStructure {
+    switch (type) {
+        case "trie":
+            return buildTrieFromInput(input);
+        case "patricia":
+            return buildPatriciaFromInput(input);
+        case "suffix":
+            // サフィックス木はPhase 2で実装予定
+            throw new Error("サフィックス木はまだ実装されていません");
+        default:
+            const _exhaustive: never = type;
+            return _exhaustive;
+    }
 }
 
 export function graphToNodes(graph: GraphInput): BonsaiData {
