@@ -62,7 +62,7 @@ export function SceneContent() {
 
     return (
         <>
-            <PerspectiveCamera makeDefault position={[0, 7, 18]} />
+            <PerspectiveCamera makeDefault position={[0, 20, 30]} />
             <OrbitControls />
 
             {/* ライティング */}
