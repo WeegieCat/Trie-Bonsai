@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useStore } from "@/store/store";
 import { TREE_TYPE_LABELS } from "@/lib/trees/common/types";
+import { getGradientStartColor } from "@/lib/gradients";
 import { HelpModal } from "./HelpModal";
 
 type HelpTopic = "treeType" | "gradient" | null;
@@ -122,7 +123,7 @@ export function SideMenu() {
                             </p>
                             <button
                                 onClick={() => openHelp("treeType")}
-                                className='text-pink-300 hover:text-pink-200 text-xs mt-1'>
+                                className='text-green-300 hover:text-green-200 text-xs mt-1'>
                                 木の種類についての解説
                             </button>
                         </div>
@@ -159,7 +160,19 @@ export function SideMenu() {
                             </select>
                             <button
                                 onClick={() => openHelp("gradient")}
-                                className='text-purple-300 hover:text-purple-200 text-xs mt-2'>
+                                className='text-xs mt-2 hover:opacity-80 transition-opacity'
+                                style={{
+                                    color: getGradientStartColor(
+                                        config.nodeGradientPreset as
+                                            | "dustyGrass"
+                                            | "newLife"
+                                            | "blessing"
+                                            | "lemonGate"
+                                            | "oldHat"
+                                            | "wideMatrix"
+                                            | "burningSpring",
+                                    ),
+                                }}>
                                 ノードグラデーションの種類における解説
                             </button>
                         </div>
