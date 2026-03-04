@@ -1,6 +1,7 @@
 "use client";
 
 import { OrbitControls, PerspectiveCamera, Line } from "@react-three/drei";
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { Color } from "three";
 import { useStore } from "@/store/store";
 
@@ -141,6 +142,15 @@ export function SceneContent() {
                     </mesh>
                 </>
             )}
+
+            <EffectComposer>
+                <Bloom
+                    mipmapBlur
+                    intensity={0.7}
+                    luminanceThreshold={0.2}
+                    luminanceSmoothing={0.6}
+                />
+            </EffectComposer>
         </>
     );
 }
