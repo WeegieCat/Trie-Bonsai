@@ -20,13 +20,6 @@ export function Footer() {
                         className='hover:text-white transition-colors'>
                         GitHub
                     </a>
-                    <a
-                        href='https://github.com/WeegieCat/Trie-Bonsai/wiki'
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className='hover:text-white transition-colors'>
-                        Wiki
-                    </a>
                 </div>
             </div>
         </footer>

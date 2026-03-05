@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
 export const dynamic = "force-static";
-export const alt = "String Bonsai Gallery";
+export const alt = "Trie Bonsai Gallery";
 export const size = {
     width: 1200,
     height: 630,
@@ -38,7 +38,7 @@ export default function Image() {
                     gap: "10px",
                 }}>
                 <div style={{ fontSize: 60, fontWeight: "bold" }}>
-                    String Bonsai
+                    Trie Bonsai
                 </div>
                 <div style={{ fontSize: 32, color: "#9ca3af" }}>
                     Gallery - Create & Share 3D Text Trees

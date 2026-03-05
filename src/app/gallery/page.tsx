@@ -214,7 +214,8 @@ export default function Gallery() {
                                 木の種類: {selectedBonsai.treeType ?? "不明"}
                             </p>
                             <p className='text-gray-300'>
-                                ノードグラデーション: {selectedBonsai.nodeGradientPreset ?? "不明"}
+                                ノードグラデーション:{" "}
+                                {selectedBonsai.nodeGradientPreset ?? "不明"}
                             </p>
                             <p className='text-gray-300 break-all'>
                                 入力文字列: {selectedBonsai.inputText ?? "不明"}

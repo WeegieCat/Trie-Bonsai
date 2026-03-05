@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "@/store/store";
 
 const BONSAI_TITLES = {
@@ -150,9 +150,23 @@ export function UIOverlay() {
 
     const handleOpenDownloadModal = () => {
         setDownloadPreviewImage(captureCanvasScreenshot());
-        setIsDownloadModalAnimating(true);
+        setIsDownloadModalAnimating(false);
         setIsDownloadModalOpen(true);
     };
+
+    useEffect(() => {
+        if (!isDownloadModalOpen) {
+            return;
+        }
+
+        const animationFrameId = requestAnimationFrame(() => {
+            setIsDownloadModalAnimating(true);
+        });
+
+        return () => {
+            cancelAnimationFrame(animationFrameId);
+        };
+    }, [isDownloadModalOpen]);
 
     const handleCloseDownloadModal = () => {
         setIsDownloadModalAnimating(false);
