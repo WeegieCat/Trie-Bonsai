@@ -25,11 +25,11 @@ vars = { CORS_ORIGIN = "https://trie-bonsai.weegiecat.com", R2_PUBLIC_BASE_URL =
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "triebonsai-prod"
-database_id = "YOUR_PROD_DB_ID"  # Set via wrangler secret
+database_id = "0adf9f0b-f6f4-4aab-a2ee-e14263dfec90"
 
 [[env.production.r2_buckets]]
 binding = "BONSAI_BUCKET"
-bucket_name = "triebonsai-images-prod"
+bucket_name = "trie-bonsai-r2"
 
 # Staging environment
 [env.staging]
