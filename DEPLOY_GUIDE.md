@@ -16,16 +16,24 @@
 wrangler login
 ```
 
-### 1.2 プロジェクト作成
+### 1.2 プロジェクト作成（Cloudflare Pages 統合）
 
 #### Pages プロジェクト
 
-```bash
-# 1. Cloudflare Dashboard で新規プロジェクト作成
-cd triebonsai
-# または以下で自動作成
-wrangler pages project create triebonsai
+1. Cloudflare Dashboard → Workers & Pages → Create application → Pages → Connect to Git
+2. GitHub リポジトリ `WeegieCat/Trie-Bonsai` を接続
+3. Build settings を以下で設定
+
+```text
+Framework preset: Next.js
+Build command: npm run build
+Build output directory: .next
+Root directory: /
 ```
+
+4. **Advanced settings で「Git submodules」を OFF** に設定
+
+> `fatal: No url found for submodule path ... in .gitmodules` を回避するため、Pages 側で submodule checkout を無効化します。
 
 #### Workers (API) プロジェクト
 
@@ -44,8 +52,8 @@ Cloudflare Dashboard → Pages Project → Settings → Environment variables
 
 ```
 環境: Production
-NEXT_PUBLIC_WORKER_API_URL=https://api.triebonsai.pages.dev
-NEXT_PUBLIC_BASE_URL=https://triebonsai.pages.dev
+NEXT_PUBLIC_WORKER_API_URL=https://api.trie-bonsai.weegiecat.com
+NEXT_PUBLIC_BASE_URL=https://trie-bonsai.weegiecat.com
 ```
 
 ### 2.2 Workers 環境変数
@@ -53,10 +61,10 @@ NEXT_PUBLIC_BASE_URL=https://triebonsai.pages.dev
 ```bash
 # Production
 wrangler secret put CORS_ORIGIN --env production
-# Input: https://triebonsai.pages.dev
+# Input: https://trie-bonsai.weegiecat.com
 
 wrangler secret put R2_PUBLIC_BASE_URL --env production
-# Input: https://r2.triebonsai.pages.dev
+# Input: https://r2.trie-bonsai.weegiecat.com
 ```
 
 ### 2.3 D1・R2 リソース ID 確認
@@ -81,71 +89,26 @@ bucket_name = "YOUR_PROD_BUCKET_NAME"
 
 ---
 
-## Phase 3: GitHub Actions 自動デプロイ
+## Phase 3: カスタムドメイン設定
 
-### 3.1 GitHub Secrets 設定
+1. Cloudflare Dashboard → Pages project → Custom domains → Set up a custom domain
+2. `trie-bonsai.weegiecat.com` を入力して追加
+3. DNS レコードを自動作成（または手動で CNAME 作成）
+4. SSL 証明書が `Active` になるまで待機
 
-リポジトリ Settings → Secrets and variables → Actions
+### 3.1 DNS（手動設定時）
 
+```text
+Type: CNAME
+Name: trie-bonsai
+Target: <your-pages-project>.pages.dev
+Proxy status: Proxied
 ```
-CLOUDFLARE_API_TOKEN=<your-api-token>
-CLOUDFLARE_ACCOUNT_ID=<your-account-id>
-CLOUDFLARE_PAGES_PROJECT_NAME=triebonsai
-CLOUDFLARE_WORKERS_PROJECT_NAME=triebonsai-edge-api-prod
-```
 
-APIトークン取得：
+### 3.2 ルートドメインの扱い
 
-1. Cloudflare Dashboard → My Account → API Tokens
-2. Create Token → "Pages" テンプレート使用
-3. トークンコピー
-
-### 3.2 GitHub Actions ワークフロー
-
-`.github/workflows/deploy.yml` を作成（参考）
-
-```yaml
-name: Deploy to Cloudflare
-
-on:
-    push:
-        branches: [main, dev]
-
-jobs:
-    deploy:
-        runs-on: ubuntu-latest
-
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                  submodules: "true"
-
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: "20"
-
-            # Pages デプロイ
-            - name: Deploy to Cloudflare Pages
-              env:
-                  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-                  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-              run: |
-                  npm install -g wrangler
-                  npm ci
-                  npm run build
-                  npx wrangler pages deploy dist --project-name=${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME }} --branch=${{ github.ref_name }}
-
-            # Workers デプロイ
-            - name: Deploy to Cloudflare Workers
-              working-directory: workers/api
-              env:
-                  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-                  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-              run: |
-                  npm ci
-                  npm run build
-                  npx wrangler deploy --env production
-```
+- `weegiecat.com` / `www.weegiecat.com` は現状維持
+- 本アプリは `trie-bonsai.weegiecat.com` のみで公開
 
 ---
 
@@ -153,40 +116,27 @@ jobs:
 
 ### 4.1 本番デプロイ
 
-```bash
-# フロントエンド
-npm run build
-npx wrangler pages deploy dist --project-name triebonsai
+Pages は Git 連携により `deploy` ブランチ push 時に自動ビルドされます。
 
-# API
+```bash
+# Workers API のみ手動デプロイ
 cd workers/api
-npm run build
-npx wrangler deploy --env production
+npm run deploy
 ```
 
 ### 4.2 確認
 
 ```bash
 # Pages サイド
-curl https://triebonsai.pages.dev
+curl https://trie-bonsai.weegiecat.com
 
 # Workers API
-curl https://api.triebonsai.pages.dev/healthz
+curl https://api.trie-bonsai.weegiecat.com/healthz
 ```
 
 ---
 
-## Phase 5: DNS・ドメイン設定（オプション）
-
-```bash
-# カスタムドメイン設定
-# Cloudflare Dashboard → Websites → DNS → Add record
-# CNAME triebonsai.pages.dev → xxxxxxxx.pages.dev
-```
-
----
-
-## トラブルシューティング
+## Phase 5: トラブルシューティング
 
 ### Pages ビルドエラー
 
@@ -196,6 +146,9 @@ npm run build
 
 # ビルド設定確認
 # Dashboard → Pages → Settings → Build & deployments
+
+# Submodule を無効化
+# Dashboard → Pages → Settings → Builds & deployments → Git submodules: OFF
 ```
 
 ### Workers デプロイエラー

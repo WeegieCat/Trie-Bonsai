@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://triebonsai.pages.dev";
+    process.env.NEXT_PUBLIC_BASE_URL || "https://trie-bonsai.weegiecat.com";
 
 export const metadata: Metadata = {
     title: "🌿 String Bonsai - Create & Share 3D Text Trees",
