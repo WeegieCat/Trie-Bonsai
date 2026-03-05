@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
+export const dynamic = "force-static";
 export const alt = "String Bonsai Creator";
 export const size = {
     width: 1200,

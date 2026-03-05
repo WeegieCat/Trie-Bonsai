@@ -1,9 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-    /* config options here */
     reactCompiler: true,
-    outputFileTracingRoot: undefined,
+    output: "export",
+    trailingSlash: true,
     experimental: {
         // Cloudflare Pages対応
         webpackMemoryOptimizations: true,

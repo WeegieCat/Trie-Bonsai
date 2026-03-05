@@ -27,7 +27,7 @@ wrangler login
 ```text
 Framework preset: Next.js
 Build command: npm run build
-Build output directory: .next
+Build output directory: out
 Root directory: /
 ```
 
@@ -143,6 +143,9 @@ curl https://api.trie-bonsai.weegiecat.com/healthz
 ```bash
 # ローカルビルド確認
 npm run build
+
+# out/ が生成されることを確認
+ls out
 
 # ビルド設定確認
 # Dashboard → Pages → Settings → Build & deployments
