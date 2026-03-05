@@ -20,7 +20,7 @@ preview_bucket_name = "triebonsai-images-preview"
 # Production environment
 [env.production]
 name = "triebonsai-edge-api-prod"
-vars = { CORS_ORIGIN = "https://trie-bonsai.weegiecat.com", R2_PUBLIC_BASE_URL = "https://r2.trie-bonsai.weegiecat.com" }
+vars = { CORS_ORIGIN = "https://trie-bonsai.weegiecat.com", R2_PUBLIC_BASE_URL = "" }
 
 [[env.production.d1_databases]]
 binding = "DB"

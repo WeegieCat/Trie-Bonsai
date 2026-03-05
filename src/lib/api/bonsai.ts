@@ -140,6 +140,18 @@ export async function fetchBonsaiList(
             };
         }
 
+        // R2 カスタムドメイン（DNS未設定）を Worker プロキシに変換
+        if (item.imageUrl.startsWith("https://r2.trie-bonsai.weegiecat.com/")) {
+            const objectKey = item.imageUrl.replace(
+                "https://r2.trie-bonsai.weegiecat.com/",
+                "",
+            );
+            return {
+                ...item,
+                imageUrl: `${apiUrl}/api/bonsai/object?key=${encodeURIComponent(objectKey)}`,
+            };
+        }
+
         const isAbsolute =
             item.imageUrl.startsWith("http://") ||
             item.imageUrl.startsWith("https://");
