@@ -10,6 +10,47 @@ interface BonsaiPostBody {
     configData: unknown;
 }
 
+interface BonsaiConfigMeta {
+    nodeGradientPreset?: string;
+    treeType?: string;
+    inputText?: string;
+}
+
+interface BonsaiTreeMeta {
+    nodes?: Array<{ id?: string }>;
+}
+
+function parseJsonObject<T>(value: string): T | null {
+    try {
+        return JSON.parse(value) as T;
+    } catch {
+        return null;
+    }
+}
+
+function inferTreeTypeFromTreeData(treeDataJson: string): string | undefined {
+    const parsed = parseJsonObject<BonsaiTreeMeta>(treeDataJson);
+    const firstNodeId = parsed?.nodes?.[0]?.id;
+
+    if (!firstNodeId) {
+        return undefined;
+    }
+
+    if (firstNodeId.startsWith("trie-")) {
+        return "trie";
+    }
+
+    if (firstNodeId.startsWith("patricia-")) {
+        return "patricia";
+    }
+
+    if (firstNodeId.startsWith("suffix-")) {
+        return "suffix";
+    }
+
+    return undefined;
+}
+
 function isBonsaiPostBody(value: unknown): value is BonsaiPostBody {
     if (!value || typeof value !== "object") {
         return false;
@@ -101,7 +142,7 @@ bonsaiRouter.get("/", async (c) => {
 
         const result = await c.env.DB.prepare(
             `
-            SELECT id, title, image_url, created_at
+            SELECT id, title, image_url, tree_data, config_data, created_at
             FROM bonsais
             ORDER BY created_at DESC
             LIMIT ?1
@@ -112,16 +153,27 @@ bonsaiRouter.get("/", async (c) => {
                 id: string;
                 title: string;
                 image_url: string;
+                tree_data: string;
+                config_data: string;
                 created_at: number;
             }>();
 
-        const items = (result.results ?? []).map((row) => ({
-            id: row.id,
-            title: row.title,
-            imageUrl: row.image_url,
-            createdAt: row.created_at,
-            likes: 0,
-        }));
+        const items = (result.results ?? []).map((row) => {
+            const configMeta =
+                parseJsonObject<BonsaiConfigMeta>(row.config_data) ?? {};
+            const inferredTreeType = inferTreeTypeFromTreeData(row.tree_data);
+
+            return {
+                id: row.id,
+                title: row.title,
+                imageUrl: row.image_url,
+                createdAt: row.created_at,
+                likes: 0,
+                treeType: configMeta.treeType ?? inferredTreeType,
+                nodeGradientPreset: configMeta.nodeGradientPreset,
+                inputText: configMeta.inputText,
+            };
+        });
 
         return c.json(
             {

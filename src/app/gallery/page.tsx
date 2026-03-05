@@ -210,6 +210,15 @@ export default function Gallery() {
                             <p className='text-gray-300'>
                                 いいね数: {selectedBonsai.likes}
                             </p>
+                            <p className='text-gray-300'>
+                                木の種類: {selectedBonsai.treeType ?? "不明"}
+                            </p>
+                            <p className='text-gray-300'>
+                                ノードグラデーション: {selectedBonsai.nodeGradientPreset ?? "不明"}
+                            </p>
+                            <p className='text-gray-300 break-all'>
+                                入力文字列: {selectedBonsai.inputText ?? "不明"}
+                            </p>
                             <p className='text-gray-400 text-sm mt-2'>
                                 作品ID: {selectedBonsai.id}
                             </p>

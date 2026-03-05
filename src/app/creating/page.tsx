@@ -20,6 +20,8 @@ export default function Creating() {
     const generateBonsai = useStore((state) => state.generateBonsai);
     const bonsaiData = useStore((state) => state.bonsaiData);
     const config = useStore((state) => state.config);
+    const treeType = useStore((state) => state.treeType);
+    const inputValue = useStore((state) => state.inputValue);
 
     useEffect(() => {
         setTreeType("trie");
@@ -37,7 +39,11 @@ export default function Creating() {
                 title: data.name,
                 imageDataUrl: data.imageDataUrl,
                 treeData: bonsaiData,
-                configData: config,
+                configData: {
+                    ...config,
+                    treeType,
+                    inputText: inputValue,
+                },
             });
 
             if (response.success) {
@@ -47,15 +53,17 @@ export default function Creating() {
                 const normalizedUrl = galleryUrl.endsWith("/")
                     ? galleryUrl
                     : `${galleryUrl}/`;
-                
+
                 // モーダルを閉じてからページ遷移
                 setIsPostModalOpen(false);
-                
+
                 // 静的サイトでは window.location.href が確実
                 window.location.href = normalizedUrl;
             } else {
                 console.error("投稿に失敗しました:", response.error);
-                alert(`投稿に失敗しました: ${response.error || "不明なエラー"}`);
+                alert(
+                    `投稿に失敗しました: ${response.error || "不明なエラー"}`,
+                );
                 setIsSubmitting(false);
             }
         } catch (error) {

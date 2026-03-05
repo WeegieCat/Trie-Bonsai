@@ -13,12 +13,12 @@ function getWorkerApiUrl(): string {
     // ブラウザ環境での実行時判定（静的エクスポート対応）
     if (typeof window !== "undefined") {
         const hostname = window.location.hostname;
-        
+
         // 本番環境の検出
         if (hostname === "trie-bonsai.weegiecat.com") {
             return "https://api.trie-bonsai.weegiecat.com";
         }
-        
+
         // プレビュー環境（Cloudflare Pagesのプレビューデプロイ）
         if (hostname.endsWith(".pages.dev")) {
             return "https://api.trie-bonsai.weegiecat.com";
@@ -52,6 +52,9 @@ export interface BonsaiGalleryItem {
     imageUrl: string;
     createdAt: number;
     likes: number;
+    treeType?: string;
+    nodeGradientPreset?: string;
+    inputText?: string;
 }
 
 interface BonsaiListResponse {

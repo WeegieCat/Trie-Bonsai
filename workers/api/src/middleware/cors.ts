@@ -20,7 +20,10 @@ const ALLOWED_ORIGINS = [
  * Cloudflare Pagesのプレビューデプロイメントを許可
  * 例: https://abc123.trie-bonsai.pages.dev
  */
-function isAllowedOrigin(origin: string | null | undefined, configuredOrigin: string): boolean {
+function isAllowedOrigin(
+    origin: string | null | undefined,
+    configuredOrigin: string,
+): boolean {
     if (!origin) return false;
 
     // 設定されたオリジン（環境変数）と一致
@@ -36,7 +39,6 @@ function isAllowedOrigin(origin: string | null | undefined, configuredOrigin: st
 
     return false;
 }
-
 
 export async function corsMiddleware(
     c: Context<{ Bindings: Env }>,
