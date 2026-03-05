@@ -7,9 +7,10 @@ interface PostModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (data: { name: string; imageDataUrl: string }) => void;
+    isSubmitting?: boolean;
 }
 
-export function PostModal({ isOpen, onClose, onSubmit }: PostModalProps) {
+export function PostModal({ isOpen, onClose, onSubmit, isSubmitting = false }: PostModalProps) {
     const [bonsaiName, setBonsaiName] = useState("");
     const [isAnimating, setIsAnimating] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
@@ -125,14 +126,15 @@ export function PostModal({ isOpen, onClose, onSubmit }: PostModalProps) {
                 <div className='flex gap-3'>
                     <button
                         onClick={handleClose}
-                        className='flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition'>
+                        disabled={isSubmitting}
+                        className='flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white font-bold rounded-lg transition'>
                         キャンセル
                     </button>
                     <button
                         onClick={handleSubmit}
-                        disabled={!bonsaiName.trim()}
-                        className='flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:text-gray-300 text-white font-bold rounded-lg transition'>
-                        投稿する
+                        disabled={!bonsaiName.trim() || isSubmitting}
+                        className='flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:text-gray-300 disabled:cursor-not-allowed text-white font-bold rounded-lg transition'>
+                        {isSubmitting ? '投稿中...' : '投稿する'}
                     </button>
                 </div>
             </div>

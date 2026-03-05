@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { BonsaiCanvas } from "@/components/Canvas";
 import { UIOverlay } from "@/components/UIOverlay";
 import { SideMenu } from "@/components/SideMenu";
@@ -15,7 +14,7 @@ import { submitBonsai } from "@/lib/api/bonsai";
 
 export default function Creating() {
     const [isPostModalOpen, setIsPostModalOpen] = useState(false);
-    const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const setTreeType = useStore((state) => state.setTreeType);
     const setInputValue = useStore((state) => state.setInputValue);
     const generateBonsai = useStore((state) => state.generateBonsai);
@@ -32,6 +31,7 @@ export default function Creating() {
         name: string;
         imageDataUrl: string;
     }) => {
+        setIsSubmitting(true);
         try {
             const response = await submitBonsai({
                 title: data.name,
@@ -41,20 +41,29 @@ export default function Creating() {
             });
 
             if (response.success) {
-                setIsPostModalOpen(false);
-                // ギャラリーページはtrailing slashが必須
+                // 静的エクスポート（output: "export"）の場合、
+                // router.push()ではなくwindow.location.hrefを使用
                 const galleryUrl = response.url || "/gallery/";
-                // 末尾スラッシュなしの場合は追加
                 const normalizedUrl = galleryUrl.endsWith("/")
                     ? galleryUrl
                     : `${galleryUrl}/`;
-                router.push(normalizedUrl);
+                
+                // モーダルを閉じてからページ遷移
+                setIsPostModalOpen(false);
+                
+                // 静的サイトでは window.location.href が確実
+                window.location.href = normalizedUrl;
             } else {
                 console.error("投稿に失敗しました:", response.error);
-                // Phase 7でエラーUIを追加予定
+                alert(`投稿に失敗しました: ${response.error || "不明なエラー"}`);
+                setIsSubmitting(false);
             }
         } catch (error) {
             console.error("投稿処理でエラーが発生しました:", error);
+            alert(
+                `投稿処理でエラーが発生しました: ${error instanceof Error ? error.message : "不明なエラー"}`,
+            );
+            setIsSubmitting(false);
         }
     };
 
@@ -99,6 +108,7 @@ export default function Creating() {
                 isOpen={isPostModalOpen}
                 onClose={() => setIsPostModalOpen(false)}
                 onSubmit={handleSubmit}
+                isSubmitting={isSubmitting}
             />
 
             <Footer />
