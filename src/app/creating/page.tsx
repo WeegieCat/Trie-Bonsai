@@ -42,7 +42,13 @@ export default function Creating() {
 
             if (response.success) {
                 setIsPostModalOpen(false);
-                router.push(response.url || "/gallery");
+                // ギャラリーページはtrailing slashが必須
+                const galleryUrl = response.url || "/gallery/";
+                // 末尾スラッシュなしの場合は追加
+                const normalizedUrl = galleryUrl.endsWith("/")
+                    ? galleryUrl
+                    : `${galleryUrl}/`;
+                router.push(normalizedUrl);
             } else {
                 console.error("投稿に失敗しました:", response.error);
                 // Phase 7でエラーUIを追加予定

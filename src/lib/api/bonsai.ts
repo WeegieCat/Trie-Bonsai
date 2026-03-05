@@ -70,7 +70,7 @@ export async function submitBonsai(
             success: true,
             id: data.id,
             imageUrl: data.imageUrl,
-            url: "/gallery",
+            url: "/gallery/",
         };
     } catch (error) {
         return {
