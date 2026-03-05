@@ -3,13 +3,8 @@
  * Worker APIへの実送信
  */
 
-// 本番環境の自動検出
+// 本番環境の自動検出（毎回実行）
 function getWorkerApiUrl(): string {
-    // 環境変数が設定されている場合はそれを優先
-    if (process.env.NEXT_PUBLIC_WORKER_API_URL) {
-        return process.env.NEXT_PUBLIC_WORKER_API_URL;
-    }
-
     // ブラウザ環境での実行時判定（静的エクスポート対応）
     if (typeof window !== "undefined") {
         const hostname = window.location.hostname;
@@ -28,8 +23,6 @@ function getWorkerApiUrl(): string {
     // 開発環境のデフォルト
     return "http://localhost:8787";
 }
-
-const WORKER_API_BASE_URL = getWorkerApiUrl();
 
 export interface BonsaiSubmitPayload {
     title: string;
@@ -77,7 +70,8 @@ export async function submitBonsai(
     payload: BonsaiSubmitPayload,
 ): Promise<BonsaiSubmitResponse> {
     try {
-        const response = await fetch(`${WORKER_API_BASE_URL}/api/bonsai`, {
+        const apiUrl = getWorkerApiUrl();
+        const response = await fetch(`${apiUrl}/api/bonsai`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -114,13 +108,11 @@ export async function submitBonsai(
 export async function fetchBonsaiList(
     limit = 48,
 ): Promise<BonsaiGalleryItem[]> {
-    const response = await fetch(
-        `${WORKER_API_BASE_URL}/api/bonsai?limit=${limit}`,
-        {
-            method: "GET",
-            cache: "no-store",
-        },
-    );
+    const apiUrl = getWorkerApiUrl();
+    const response = await fetch(`${apiUrl}/api/bonsai?limit=${limit}`, {
+        method: "GET",
+        cache: "no-store",
+    });
 
     const data = (await response.json()) as BonsaiListResponse;
 
@@ -135,7 +127,7 @@ export async function fetchBonsaiList(
             const key = item.imageUrl.split(legacyPrefix)[1] ?? "";
             return {
                 ...item,
-                imageUrl: `${WORKER_API_BASE_URL}/api/bonsai/object?key=${encodeURIComponent(key)}`,
+                imageUrl: `${apiUrl}/api/bonsai/object?key=${encodeURIComponent(key)}`,
             };
         }
 
@@ -149,7 +141,7 @@ export async function fetchBonsaiList(
 
         return {
             ...item,
-            imageUrl: `${WORKER_API_BASE_URL}/api/bonsai/object?key=${encodeURIComponent(item.imageUrl)}`,
+            imageUrl: `${apiUrl}/api/bonsai/object?key=${encodeURIComponent(item.imageUrl)}`,
         };
     });
 }
