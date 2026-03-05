@@ -15,14 +15,46 @@ export function InfinitySlider() {
     useEffect(() => {
         // ギャラリー画像データ
         const mockBonsais: BonsaiItem[] = [
-            { id: "bonsai-1", imageUrl: "/gallery/bonsai-1.png", title: "盆栽 #1" },
-            { id: "bonsai-2", imageUrl: "/gallery/bonsai-2.png", title: "盆栽 #2" },
-            { id: "bonsai-3", imageUrl: "/gallery/bonsai-3.png", title: "盆栽 #3" },
-            { id: "bonsai-4", imageUrl: "/gallery/bonsai-4.png", title: "盆栽 #4" },
-            { id: "bonsai-5", imageUrl: "/gallery/bonsai-5.png", title: "盆栽 #5" },
-            { id: "bonsai-6", imageUrl: "/gallery/bonsai-6.png", title: "盆栽 #6" },
-            { id: "bonsai-7", imageUrl: "/gallery/bonsai-7.png", title: "盆栽 #7" },
-            { id: "bonsai-8", imageUrl: "/gallery/bonsai-8.png", title: "盆栽 #8" },
+            {
+                id: "bonsai-1",
+                imageUrl: "/gallery/bonsai-1.png",
+                title: "独坐孤峰",
+            },
+            {
+                id: "bonsai-2",
+                imageUrl: "/gallery/bonsai-2.png",
+                title: "断崖雲湧",
+            },
+            {
+                id: "bonsai-3",
+                imageUrl: "/gallery/bonsai-3.png",
+                title: "翠嵐一息",
+            },
+            {
+                id: "bonsai-4",
+                imageUrl: "/gallery/bonsai-4.png",
+                title: "古潭月影",
+            },
+            {
+                id: "bonsai-5",
+                imageUrl: "/gallery/bonsai-5.png",
+                title: "千歳凍解",
+            },
+            {
+                id: "bonsai-6",
+                imageUrl: "/gallery/bonsai-6.png",
+                title: "万象帰一",
+            },
+            {
+                id: "bonsai-7",
+                imageUrl: "/gallery/bonsai-7.png",
+                title: "悠遠残響",
+            },
+            {
+                id: "bonsai-8",
+                imageUrl: "/gallery/bonsai-8.png",
+                title: "虚空寂滅",
+            },
         ];
 
         setItems(mockBonsais);

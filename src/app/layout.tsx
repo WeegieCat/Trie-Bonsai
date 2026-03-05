@@ -17,13 +17,11 @@ const baseUrl =
 
 export const metadata: Metadata = {
     title: "Trie Bonsai",
-    description:
-        "Generate beautiful 3D bonsai trees from text strings. Plant your words as digital bonsai art.",
+    description: "トライ木から美しい3D盆栽を生成するアプリ",
     metadataBase: new URL(baseUrl),
     openGraph: {
         title: "Trie Bonsai",
-        description:
-            "Generate beautiful 3D bonsai trees from text strings. Plant your words as digital bonsai art.",
+        description: "トライ木から美しい3D盆栽を生成するアプリ",
         url: baseUrl,
         siteName: "Trie Bonsai",
         locale: "ja_JP",
@@ -40,7 +38,7 @@ export const metadata: Metadata = {
     twitter: {
         card: "summary_large_image",
         title: "Trie Bonsai",
-        description: "Generate beautiful 3D bonsai trees from text strings.",
+        description: "トライ木から美しい3D盆栽を生成するアプリ",
         images: ["/og-image.png"],
     },
     robots: {
