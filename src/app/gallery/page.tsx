@@ -12,7 +12,6 @@ export default function Gallery() {
     const [bonsais, setBonsais] = useState<BonsaiItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [sortBy, setSortBy] = useState<"recent" | "popular">("recent");
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedBonsai, setSelectedBonsai] = useState<BonsaiItem | null>(
         null,
@@ -55,18 +54,12 @@ export default function Gallery() {
     }, []);
 
     const filteredBonsais = useMemo(() => {
-        const searched = bonsais.filter((bonsai) =>
-            bonsai.title.toLowerCase().includes(searchQuery.toLowerCase()),
-        );
-
-        return [...searched].sort((a, b) => {
-            if (sortBy === "popular") {
-                return b.likes - a.likes;
-            }
-
-            return b.createdAt - a.createdAt;
-        });
-    }, [bonsais, searchQuery, sortBy]);
+        return bonsais
+            .filter((bonsai) =>
+                bonsai.title.toLowerCase().includes(searchQuery.toLowerCase()),
+            )
+            .sort((a, b) => b.createdAt - a.createdAt);
+    }, [bonsais, searchQuery]);
 
     const handleOpenDetailModal = (bonsai: BonsaiItem) => {
         setSelectedBonsai(bonsai);
@@ -91,10 +84,9 @@ export default function Gallery() {
                     </p>
                 </div>
 
-                {/* フィルター＆検索バー */}
-                <div className='mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between'>
-                    {/* 検索 */}
-                    <div className='w-full sm:w-96'>
+                {/* 検索バー */}
+                <div className='mb-8 flex justify-center'>
+                    <div className='w-full max-w-2xl'>
                         <input
                             type='text'
                             placeholder='作品名で検索...'
@@ -102,28 +94,6 @@ export default function Gallery() {
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className='w-full px-4 py-3 bg-gray-800 text-white rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500'
                         />
-                    </div>
-
-                    {/* ソート */}
-                    <div className='flex gap-3'>
-                        <button
-                            onClick={() => setSortBy("recent")}
-                            className={`px-6 py-3 rounded-lg font-medium transition ${
-                                sortBy === "recent"
-                                    ? "bg-green-600 text-white"
-                                    : "bg-gray-800 text-gray-400 hover:bg-gray-700"
-                            }`}>
-                            🕒 最新順
-                        </button>
-                        <button
-                            onClick={() => setSortBy("popular")}
-                            className={`px-6 py-3 rounded-lg font-medium transition ${
-                                sortBy === "popular"
-                                    ? "bg-green-600 text-white"
-                                    : "bg-gray-800 text-gray-400 hover:bg-gray-700"
-                            }`}>
-                            🔥 人気順
-                        </button>
                     </div>
                 </div>
 
@@ -206,9 +176,6 @@ export default function Gallery() {
                         <div className='mb-6'>
                             <p className='text-xl font-bold text-white mb-2'>
                                 {selectedBonsai.title}
-                            </p>
-                            <p className='text-gray-300'>
-                                いいね数: {selectedBonsai.likes}
                             </p>
                             <p className='text-gray-300'>
                                 木の種類: {selectedBonsai.treeType ?? "不明"}
