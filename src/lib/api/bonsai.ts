@@ -3,8 +3,33 @@
  * Worker APIへの実送信
  */
 
-const WORKER_API_BASE_URL =
-    process.env.NEXT_PUBLIC_WORKER_API_URL ?? "http://localhost:8787";
+// 本番環境の自動検出
+function getWorkerApiUrl(): string {
+    // 環境変数が設定されている場合はそれを優先
+    if (process.env.NEXT_PUBLIC_WORKER_API_URL) {
+        return process.env.NEXT_PUBLIC_WORKER_API_URL;
+    }
+
+    // ブラウザ環境での実行時判定（静的エクスポート対応）
+    if (typeof window !== "undefined") {
+        const hostname = window.location.hostname;
+        
+        // 本番環境の検出
+        if (hostname === "trie-bonsai.weegiecat.com") {
+            return "https://api.trie-bonsai.weegiecat.com";
+        }
+        
+        // プレビュー環境（Cloudflare Pagesのプレビューデプロイ）
+        if (hostname.endsWith(".pages.dev")) {
+            return "https://api.trie-bonsai.weegiecat.com";
+        }
+    }
+
+    // 開発環境のデフォルト
+    return "http://localhost:8787";
+}
+
+const WORKER_API_BASE_URL = getWorkerApiUrl();
 
 export interface BonsaiSubmitPayload {
     title: string;
