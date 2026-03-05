@@ -5,18 +5,27 @@
 
 // 本番環境の自動検出（毎回実行）
 function getWorkerApiUrl(): string {
+    const productionWorkerUrl =
+        "https://triebonsai-edge-api-prod.weegieluke.workers.dev";
+
+    // Build-time environment variable takes precedence in all environments.
+    const configuredApiUrl = process.env.NEXT_PUBLIC_WORKER_API_URL?.trim();
+    if (configuredApiUrl) {
+        return configuredApiUrl.replace(/\/$/, "");
+    }
+
     // ブラウザ環境での実行時判定（静的エクスポート対応）
     if (typeof window !== "undefined") {
         const hostname = window.location.hostname;
 
         // 本番環境の検出
         if (hostname === "trie-bonsai.weegiecat.com") {
-            return "https://api.trie-bonsai.weegiecat.com";
+            return productionWorkerUrl;
         }
 
         // プレビュー環境（Cloudflare Pagesのプレビューデプロイ）
         if (hostname.endsWith(".pages.dev")) {
-            return "https://api.trie-bonsai.weegiecat.com";
+            return productionWorkerUrl;
         }
     }
 

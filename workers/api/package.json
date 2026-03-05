@@ -5,7 +5,9 @@
     "type": "module",
     "scripts": {
         "dev": "wrangler dev",
-        "deploy": "wrangler deploy",
+        "deploy": "wrangler deploy --env production",
+        "deploy:staging": "wrangler deploy --env staging",
+        "deploy:dev": "wrangler deploy",
         "typecheck": "tsc --noEmit",
         "db:generate": "drizzle-kit generate"
     },
